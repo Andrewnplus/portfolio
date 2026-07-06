@@ -1,0 +1,75 @@
+---
+import Base from '../../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base title="Pre-empting a broker upgrade outage — Andrew Yang">
+  <p><a href={`${base}/work/`}>← Case studies</a></p>
+  <span class="tag">reliability</span>
+  <h1>Pre-empting a broker upgrade outage: RabbitMQ 4.3 vs transient queues</h1>
+  <p class="lede">
+    The best incident write-up is the one that never needed to exist. Tracing a
+    breaking change in a broker release to two language bindings of a shared
+    library — before the upgrade shipped.
+  </p>
+
+  <h2>Context</h2>
+  <p>
+    Our services share a small eventing library for cache invalidation: every
+    service instance declares its own short-lived fanout queue, receives
+    invalidation events, and the queue disappears when the connection closes.
+    The library exists in JVM, Node, and PHP bindings, used across the fleet.
+  </p>
+
+  <h2>Problem</h2>
+  <p>
+    A planned RabbitMQ 4.3 upgrade came with a deprecation that was easy to
+    skim past: the broker now <strong>rejects transient queues that are not
+    exclusive</strong>. Our JVM and Node listeners declared their per-instance
+    queues as <code>durable=false, exclusive=false, auto-delete=true</code> —
+    exactly the combination being removed. Had the upgrade gone ahead, every
+    JVM and Node consumer of the library would have failed to boot its cache
+    invalidation — quietly, at reconnect time, across the fleet.
+  </p>
+
+  <h2>Approach</h2>
+  <ul class="clean">
+    <li>
+      <strong>Read the release notes like a diff against our topology.</strong>
+      The audit found the risky declaration in two of the three language
+      bindings; the PHP binding had already moved to quorum queues and was
+      unaffected.
+    </li>
+    <li>
+      <strong>Reproduce before believing:</strong> spun up RabbitMQ 4.3 in dev
+      and confirmed the rejection with the library as-is.
+    </li>
+    <li>
+      <strong>Fix with the semantics preserved:</strong> switched the
+      declarations to <code>exclusive=true</code> — the officially recommended
+      replacement, which keeps precisely the behaviour the library wanted all
+      along: one private queue per instance, deleted when the connection dies.
+    </li>
+    <li>
+      <strong>Roll out ahead of the upgrade:</strong> released the library and
+      bumped every consuming project, so the broker upgrade landed on a fleet
+      that was already compatible.
+    </li>
+  </ul>
+
+  <h2>Impact</h2>
+  <p>
+    A cross-service outage that never happened. The upgrade shipped on
+    schedule, with a verified fix instead of a 2 a.m. rollback.
+  </p>
+
+  <h2>What I'd tell my past self</h2>
+  <p>
+    Broker upgrades are schema migrations for your message topology — treat
+    release notes as breaking-change lists, and treat queue declarations as
+    code you own even when they live in a library someone else wrote. My
+    <a href={`${base}/demo/`}>ai-radar demo</a> encodes this as a runbook rule:
+    no broker minor bump without reading the queue-semantics changelog and
+    rehearsing in a throwaway environment first.
+  </p>
+</Base>

@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base title="Zero-downtime migration of the power-management model — Andrew Yang">
+  <p><a href={`${base}/work/`}>← Case studies</a></p>
+  <span class="tag">migration</span>
+  <h1>Zero-downtime migration of the power-management model</h1>
+  <p class="lede">
+    Moving live plants from a legacy power-management model to a new
+    power-plant-controller abstraction — with the data, the calculations, and
+    the transition period all accounted for.
+  </p>
+
+  <h2>Context</h2>
+  <p>
+    Power control (curtailment setpoints, grid-operator commands) was modeled on
+    a legacy device type that had grown into a dead end: the platform needed a
+    proper power-plant-controller (PPC) abstraction to support newer plant
+    topologies. Hundreds of live systems were writing power-management data
+    every interval — there was no maintenance window in which the world stood
+    still.
+  </p>
+
+  <h2>Design</h2>
+  <ul class="clean">
+    <li>
+      <strong>Migration script as a first-class deliverable:</strong> device and
+      historical data migrated programmatically, reviewable and re-runnable —
+      not a one-off console session.
+    </li>
+    <li>
+      <strong>The transition gap, handled explicitly:</strong> between "new
+      device exists" and "old device retired" lies a window where data can land
+      on either side. The calculation pipeline was taught to create the PPC
+      device on demand and backfill the gap, so no interval went missing during
+      cutover.
+    </li>
+    <li>
+      <strong>A clean cutover of side effects:</strong> setpoint-event
+      calculation was switched off for the legacy device exactly when the PPC
+      took over — no double-calculation, no silent stop.
+    </li>
+  </ul>
+
+  <h2>Impact</h2>
+  <p>
+    The fleet moved to the new model with no data loss and no downtime. The
+    abstraction paid for itself a year later: introducing <strong>virtual
+    PPCs</strong> (for plants whose controller is implicit) was a schema design,
+    one new calculation module, and a set of API endpoints — an extension, not
+    another migration.
+  </p>
+
+  <h2>What I'd tell my past self</h2>
+  <p>
+    In an online migration the interesting artifact isn't the script — it's the
+    inventory of everything that reads or writes the old model, and a decision
+    for each one about what happens <em>during</em> the transition, not just
+    after it. The gap window is the design surface.
+  </p>
+</Base>

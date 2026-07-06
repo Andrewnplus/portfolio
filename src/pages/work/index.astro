@@ -18,24 +18,28 @@ const cases = [
   },
   {
     tag: 'reliability',
+    slug: 'rabbitmq-4x-preemption',
     title: 'Pre-empting a broker upgrade outage',
     teaser:
       'RabbitMQ 4.3 started rejecting a queue-declaration pattern our shared event library used in two language bindings. Traced, fixed, reproduced in dev, and rolled out across every consumer — before the upgrade shipped.',
   },
   {
     tag: 'platform',
+    slug: 'vendor-integration-platform',
     title: 'A repeatable architecture for onboarding vendor APIs',
     teaser:
       'Six-plus vendor integrations, each spanning six repositories — importer, preprocessor, registration, scheduling, backup, API contract — turned into a routine with self-recovering importers and SLA-protecting traffic separation.',
   },
   {
     tag: 'migration',
+    slug: 'online-data-migration',
     title: 'Zero-downtime migration of the power-management model',
     teaser:
       'An online data migration to a new device abstraction: migration script, transitional gap backfill, and a cutover of setpoint calculation with no data loss.',
   },
   {
     tag: 'domain × backend',
+    slug: 'kpi-calculation-platform',
     title: 'From physics model to production KPI service',
     teaser:
       'Six yield-loss models and the platform’s first device-level KPIs, each built from OpenAPI spec through database schema to the calculation pipeline.',

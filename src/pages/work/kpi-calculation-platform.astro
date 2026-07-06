@@ -1,0 +1,66 @@
+---
+import Base from '../../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base title="From physics model to production KPI service — Andrew Yang">
+  <p><a href={`${base}/work/`}>← Case studies</a></p>
+  <span class="tag">domain × backend</span>
+  <h1>From physics model to production KPI service</h1>
+  <p class="lede">
+    Yield-loss models and device-level KPIs are where domain knowledge meets
+    backend engineering: every number a customer bills against starts as a
+    formula and has to end as a service.
+  </p>
+
+  <h2>Context</h2>
+  <p>
+    When a solar plant is curtailed — told by the grid operator or a direct
+    marketer to produce less — the energy it <em>didn't</em> produce is money,
+    and someone has to compute it defensibly. Batteries add their own questions:
+    how hard is a battery being cycled, and how available is it really?
+  </p>
+
+  <h2>Six models, one service</h2>
+  <p>
+    I built the yield-loss calculation service from specification to production:
+    <strong>six loss models</strong> — simulation-based, linear-equation,
+    reference-system, reference-component, flat-rate, and peak/simplified-peak —
+    each a different trade-off between accuracy and the data a plant actually
+    has. Choosing the model is the customer's call; making every model
+    consistent, versioned, and explainable is the service's job.
+  </p>
+
+  <h2>Opening the device-level KPI line</h2>
+  <p>
+    The platform's KPIs had always been system-level. The first
+    <strong>device-level KPI</strong> — Full-Cycle-Equivalent for batteries —
+    required a new schema pattern for per-device daily values, and each KPI
+    spans the full chain: OpenAPI spec → database schema → Kotlin service
+    endpoint → calculation module in the import pipeline. Battery Availability
+    followed the same pattern immediately, which is the point: the first one
+    created the groove for every one after it.
+  </p>
+
+  <h2>Supporting cast</h2>
+  <ul class="clean">
+    <li>
+      Monthly and yearly resolutions for the measurement-data API, computed by
+      <strong>aggregation in the database</strong> rather than hauling raw
+      series across the wire — the difference between a feature and a timeout.
+    </li>
+    <li>
+      Spec-first throughout: every service boundary is an OpenAPI contract
+      generating the Kotlin server, Kotlin client, and PHP client — the compiler
+      enforces cross-repo compatibility before review does.
+    </li>
+  </ul>
+
+  <h2>What I'd tell my past self</h2>
+  <p>
+    Domain formulas are the easy part; the engineering is in the boundaries —
+    where a model's inputs come from, what happens when they're missing, and
+    which resolution the database should own. Get the first schema pattern
+    right, because every subsequent KPI will copy it, mistakes included.
+  </p>
+</Base>

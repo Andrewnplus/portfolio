@@ -1,0 +1,72 @@
+---
+import Base from '../../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base title="A repeatable architecture for onboarding vendor APIs — Andrew Yang">
+  <p><a href={`${base}/work/`}>← Case studies</a></p>
+  <span class="tag">platform</span>
+  <h1>A repeatable architecture for onboarding vendor APIs</h1>
+  <p class="lede">
+    Six-plus third-party integrations — Huawei FusionSolar, Solcast, GoodWe,
+    Enedis, and more — each spanning six repositories. The deliverable wasn't any
+    single integration; it was making the next one routine.
+  </p>
+
+  <h2>Context</h2>
+  <p>
+    A solar-monitoring platform lives or dies by ingestion: every logger vendor,
+    inverter cloud, and grid operator exposes data differently. Each new vendor
+    API must be fetched, normalized to the platform's canonical format,
+    registered as a measurement system, scheduled, backed up, and exposed
+    through the API contract — six repositories touched per integration, from
+    Kotlin importers to PHP measurement systems to infrastructure config.
+  </p>
+
+  <h2>The platform, not the plumbing</h2>
+  <ul class="clean">
+    <li>
+      <strong>A fixed onboarding path:</strong> importer → preprocessor →
+      measurement-system registration → scheduling → backup → API spec → docs.
+      Every integration is decomposed into the same repo-scoped steps, in the
+      same order, reviewable independently. Planning a vendor became writing a
+      checklist, not an adventure.
+    </li>
+    <li>
+      <strong>Self-recovery as a feature:</strong> the irradiance importer runs
+      a daily completeness audit (per-system record counts) and automatically
+      re-fetches gaps on the next cycle — self-healing within an hour, covering
+      source-side outages, endpoint failures, and maintenance windows without a
+      human in the loop.
+    </li>
+    <li>
+      <strong>Protecting the realtime SLA:</strong> when metrics showed bulk
+      historical backfills slowing live ingestion, historical traffic moved to a
+      dedicated account and lane for the largest partner on that API — bulk and
+      realtime stopped competing.
+    </li>
+    <li>
+      <strong>Session reuse at fleet scale:</strong> refactored the importer
+      launcher to group jobs by credentials and reuse login sessions, cutting
+      redundant authentication against vendor APIs (some of which rate-limit
+      logins harder than data calls).
+    </li>
+  </ul>
+
+  <h2>Deciding what <em>not</em> to build</h2>
+  <p>
+    The same ownership included feasibility spikes — six-plus vendor APIs
+    evaluated and sized before anyone committed. The most consequential one
+    turned a stalled go/no-go on a national grid-operator integration into a
+    concrete decision, by identifying that the only genuinely new component was
+    one importer and one controller extension on top of the existing
+    curtailment engine.
+  </p>
+
+  <h2>What I'd tell my past self</h2>
+  <p>
+    The first integration you build is a feature; the second is a pattern; by
+    the third, any step that isn't templated is a future incident. Invest in the
+    checklist earlier.
+  </p>
+</Base>
