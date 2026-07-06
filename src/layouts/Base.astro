@@ -7,8 +7,9 @@ interface Props {
 }
 
 const { title, description = 'Andrew Yang — backend engineer. Data pipelines, message queues, KPI services, and large-scale automation.' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 const path = Astro.url.pathname;
-const current = (p: string) => (path === p || path === `${p}/` ? 'page' : undefined);
+const current = (p: string) => (path === `${base}${p}` || path === `${base}${p}/` ? 'page' : undefined);
 ---
 
 <!doctype html>
@@ -22,11 +23,11 @@ const current = (p: string) => (path === p || path === `${p}/` ? 'page' : undefi
   <body>
     <div class="wrap">
       <nav class="site">
-        <a class="brand" href="/">Andrew Yang</a>
-        <a href="/work/" aria-current={current('/work')}>Work</a>
-        <a href="/platform/" aria-current={current('/platform')}>Platform</a>
-        <a href="/demo/" aria-current={current('/demo')}>Demo</a>
-        <a href="/about/" aria-current={current('/about')}>About</a>
+        <a class="brand" href={`${base}/`}>Andrew Yang</a>
+        <a href={`${base}/work/`} aria-current={current('/work')}>Work</a>
+        <a href={`${base}/platform/`} aria-current={current('/platform')}>Platform</a>
+        <a href={`${base}/demo/`} aria-current={current('/demo')}>Demo</a>
+        <a href={`${base}/about/`} aria-current={current('/about')}>About</a>
       </nav>
       <main>
         <slot />

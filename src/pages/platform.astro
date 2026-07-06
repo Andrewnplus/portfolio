@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
 <Base title="Knowledge platform — Andrew Yang">
@@ -38,7 +39,7 @@ import Base from '../layouts/Base.astro';
   <h2>v1 → v2 of the same idea</h2>
   <p>
     The provisioning CLI is a file-based queue with a two-phase AI workflow — an
-    async content pipeline, version one. <a href="/demo/">ai-radar</a> is version
+    async content pipeline, version one. <a href={`${base}/demo/`}>ai-radar</a> is version
     two of the same problem with production-grade semantics: a real broker,
     delivery guarantees, retry topology, and observability.
   </p>

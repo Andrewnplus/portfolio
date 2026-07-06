@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
 <Base title="About — Andrew Yang">
@@ -46,9 +47,9 @@ import Base from '../layouts/Base.astro';
 
   <h2>Outside work</h2>
   <p>
-    I run a <a href="/platform/">1,477-repository knowledge platform</a> — book notes,
+    I run a <a href={`${base}/platform/`}>1,477-repository knowledge platform</a> — book notes,
     handbooks, and topic sites — governed by the same engineering discipline I use
-    professionally, and a <a href="/demo/">message-queue demo system</a> that puts my
+    professionally, and a <a href={`${base}/demo/`}>message-queue demo system</a> that puts my
     reliability-semantics claims where anyone can audit them.
   </p>
 
