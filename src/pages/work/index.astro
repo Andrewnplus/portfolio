@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const cases = [
+  {
+    tag: 'performance',
+    title: 'From a site-wide outage to the right metric',
+    teaser:
+      'Import calculation flooded a config API and took the platform down. Profiling cut the hot-path request count 84% (925 → 151 req/s) — then a service-time analysis corrected the obvious conclusion and found the real bottleneck elsewhere.',
+  },
+  {
+    tag: 'async design',
+    title: 'Killing the 60-second timeout: queue-ifying a million-datapoint export',
+    teaser:
+      'A 300-plant customer export (~820k datapoints) could never survive a synchronous 60s window. Redesigned as a queue-backed worker with hash-based job dedup, object-storage delivery, and per-user push notification.',
+  },
+  {
+    tag: 'reliability',
+    title: 'Pre-empting a broker upgrade outage',
+    teaser:
+      'RabbitMQ 4.3 started rejecting a queue-declaration pattern our shared event library used in two language bindings. Traced, fixed, reproduced in dev, and rolled out across every consumer — before the upgrade shipped.',
+  },
+  {
+    tag: 'platform',
+    title: 'A repeatable architecture for onboarding vendor APIs',
+    teaser:
+      'Six-plus vendor integrations, each spanning six repositories — importer, preprocessor, registration, scheduling, backup, API contract — turned into a routine with self-recovering importers and SLA-protecting traffic separation.',
+  },
+  {
+    tag: 'migration',
+    title: 'Zero-downtime migration of the power-management model',
+    teaser:
+      'An online data migration to a new device abstraction: migration script, transitional gap backfill, and a cutover of setpoint calculation with no data loss.',
+  },
+  {
+    tag: 'domain × backend',
+    title: 'From physics model to production KPI service',
+    teaser:
+      'Six yield-loss models and the platform’s first device-level KPIs, each built from OpenAPI spec through database schema to the calculation pipeline.',
+  },
+];
+---
+
+<Base title="Case studies — Andrew Yang">
+  <h1>Case studies</h1>
+  <p class="lede">
+    Six production stories from three years owning a solar-monitoring ingest
+    pipeline. Internal system names are abstracted; the architecture and the
+    numbers are real. Full write-ups are being published one by one.
+  </p>
+
+  <div class="case-list">
+    {
+      cases.map((c) => (
+        <div class="card">
+          <span class="tag">{c.tag}</span>
+          <h3>{c.title}</h3>
+          <p>{c.teaser}</p>
+        </div>
+      ))
+    }
+  </div>
+</Base>

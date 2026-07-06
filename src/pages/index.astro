@@ -1,0 +1,39 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Andrew Yang — Backend Engineer">
+  <h1>Backend engineer who owns data pipelines end-to-end.</h1>
+  <p class="lede">
+    From vendor API ingestion through message queues to KPI calculation services —
+    and everything that repeats gets automated. Three years as the de-facto owner
+    of a solar-monitoring ingest pipeline (Kotlin · PHP · RabbitMQ · MySQL · Kubernetes).
+  </p>
+
+  <div class="stats">
+    <div class="stat"><span class="n">3 yrs</span><span class="d">ingest-pipeline de-facto owner, cross-stack root-cause work</span></div>
+    <div class="stat"><span class="n">6+</span><span class="d">third-party vendor APIs onboarded end-to-end, each across 6 repositories</span></div>
+    <div class="stat"><span class="n">925 → 151 req/s</span><span class="d">hot-path request count −84% — then re-scoped with service-time analysis</span></div>
+    <div class="stat"><span class="n">471</span><span class="d">tickets resolved in 3 years, volume doubling year over year</span></div>
+    <div class="stat"><span class="n">1,477</span><span class="d">repos in a personal knowledge platform under automated governance</span></div>
+  </div>
+
+  <div class="cards">
+    <a class="card" href="/work/">
+      <h3>Case studies</h3>
+      <p>Six production stories: a site-wide outage turned into the right metric, a million-datapoint export queue-ified, a broker upgrade pre-empted.</p>
+    </a>
+    <a class="card" href="/platform/">
+      <h3>Knowledge platform</h3>
+      <p>1,477 repositories, one owner: fleet governance with convention plugins, automated dependency policy, and an AI-assisted content pipeline.</p>
+    </a>
+    <a class="card" href="/demo/">
+      <h3>Live demo — ai-radar</h3>
+      <p>A RabbitMQ pipeline with idempotent consumers, a TTL+DLX retry ladder, DLQ replay tooling, and an LLM cost circuit breaker. Running now.</p>
+    </a>
+    <a class="card" href="/about/">
+      <h3>About</h3>
+      <p>Background, technical range, and how to reach me.</p>
+    </a>
+  </div>
+</Base>

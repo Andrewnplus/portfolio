@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="ai-radar — live demo — Andrew Yang">
+  <h1>ai-radar: reliability semantics you can audit</h1>
+  <p class="lede">
+    A queue-based pipeline that collects AI news from multiple sources, digests it
+    with an LLM, and publishes a daily static digest — plus a dashboard of the
+    system's own health. The content is the by-product; the system is the point.
+  </p>
+
+  <h2>What it demonstrates</h2>
+  <ul class="clean">
+    <li>
+      <strong>At-least-once delivery, idempotent consumers:</strong> manual ack after
+      the database commit; every side effect keyed on a unique constraint; state-machine
+      transitions make redelivery a no-op.
+    </li>
+    <li>
+      <strong>A TTL + DLX retry ladder</strong> (30s / 5m / 1h wait-queues, no plugins)
+      with a dead-letter queue, a <code>replay</code> CLI, and a triage runbook.
+    </li>
+    <li>
+      <strong>An LLM cost circuit breaker:</strong> when the daily budget is spent the
+      consumer stops and the backlog waits <em>in the queue</em> for the next window —
+      the clearest argument for a broker over a cron job.
+    </li>
+    <li>
+      <strong>Honest architecture decisions:</strong> eight ADRs, including why a
+      message broker at all (and where the cron-job line is), and why docker-compose
+      rather than Kubernetes for a single-host system.
+    </li>
+  </ul>
+
+  <h2>Links</h2>
+  <p>
+    <a href="https://github.com/nplus-father/ai-radar">Source &amp; ADRs on GitHub</a><br />
+    <span class="muted">Live dashboard: coming online with the site repo — the data
+    source (hourly pipeline-health snapshots) is already being captured.</span>
+  </p>
+</Base>

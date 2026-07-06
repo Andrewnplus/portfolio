@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Knowledge platform — Andrew Yang">
+  <h1>A 1,477-repository platform with one operator</h1>
+  <p class="lede">
+    My reading notes, handbooks, and topic sites live in 1,477 repositories under
+    one GitHub organization. At that scale, "personal websites" becomes a fleet
+    management problem — which is exactly why it's here.
+  </p>
+
+  <h2>The engineering underneath</h2>
+  <ul class="clean">
+    <li>
+      <strong>Fleet governance:</strong> a Gradle convention plugin published to a
+      package registry pins toolchain and formatting for every repository; a shared
+      Renovate preset rolls dependency updates across the fleet monthly with automerge.
+    </li>
+    <li>
+      <strong>Provisioning pipeline:</strong> a Kotlin CLI takes a queue of books and
+      creates repositories end-to-end — AI-assisted metadata, duplicate detection
+      against a cached repo index, template instantiation, cover processing, docs
+      scaffolding, and GitHub Pages activation.
+    </li>
+    <li>
+      <strong>Metadata discipline:</strong> a three-tier topic taxonomy with a
+      whitelist keeps 1,400+ repositories queryable; idempotent provisioning makes
+      re-runs safe.
+    </li>
+    <li>
+      <strong>Operational scar tissue:</strong> batch pushes hitting Pages deploy
+      throttling, formatting hooks across ~1,300 working copies, wrapper upgrades
+      across generations of JDKs — fleet problems, fleet solutions.
+    </li>
+  </ul>
+
+  <h2>v1 → v2 of the same idea</h2>
+  <p>
+    The provisioning CLI is a file-based queue with a two-phase AI workflow — an
+    async content pipeline, version one. <a href="/demo/">ai-radar</a> is version
+    two of the same problem with production-grade semantics: a real broker,
+    delivery guarantees, retry topology, and observability.
+  </p>
+</Base>

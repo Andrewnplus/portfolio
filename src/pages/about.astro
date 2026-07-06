@@ -1,0 +1,61 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="About — Andrew Yang">
+  <h1>About</h1>
+  <p class="lede">
+    Backend engineer at meteocontrol (solar-monitoring platform), based in Germany.
+    I work where data pipelines, message queues, and domain modeling meet — and I
+    automate anything I have to do twice.
+  </p>
+
+  <h2>What I do at work</h2>
+  <ul class="clean">
+    <li>
+      <strong>Own the vendor-integration platform</strong> for a solar-monitoring
+      ingest pipeline: 6+ third-party vendor APIs onboarded end-to-end, each spanning
+      six repositories from parser to OpenAPI contract, plus feasibility spikes that
+      turned stalled go/no-go decisions into concrete estimates.
+    </li>
+    <li>
+      <strong>Turn incidents into architecture.</strong> A site-wide performance
+      outage became a profiling exercise: request count on the hot path cut 84%
+      (925 → 151 req/s) — and then a service-time analysis that corrected my own
+      first conclusion about where the real bottleneck was.
+    </li>
+    <li>
+      <strong>Build calculation services from physics to production:</strong> six
+      yield-loss models and the platform's first device-level KPIs, each covering
+      OpenAPI spec, database schema, Kotlin service, and the calculation pipeline.
+    </li>
+    <li>
+      <strong>Keep production honest:</strong> 100+ cross-stack root-cause
+      investigations (ingestion, timezones, vendor mappings, curtailment
+      attribution), codified into runbooks the team actually reuses.
+    </li>
+  </ul>
+
+  <h2>Technical range</h2>
+  <p>
+    <strong>Daily drivers:</strong> Kotlin (Ktor, Exposed, Gradle), PHP 8, RabbitMQ,
+    MySQL/MariaDB at measurement-data scale, Redis, OpenAPI spec-first workflows.<br />
+    <strong>Operations:</strong> Kubernetes, Docker, Prometheus/Grafana, CI/CD
+    (TeamCity), PostgreSQL on personal infrastructure.
+  </p>
+
+  <h2>Outside work</h2>
+  <p>
+    I run a <a href="/platform/">1,477-repository knowledge platform</a> — book notes,
+    handbooks, and topic sites — governed by the same engineering discipline I use
+    professionally, and a <a href="/demo/">message-queue demo system</a> that puts my
+    reliability-semantics claims where anyone can audit them.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    <a href="https://github.com/Andrewnplus">github.com/Andrewnplus</a> ·
+    <a href="mailto:andrew.nplus@gmail.com">andrew.nplus@gmail.com</a><br />
+    <span class="muted">PDF résumé: on request (web version of the case studies is canonical).</span>
+  </p>
+</Base>
