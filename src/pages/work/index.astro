@@ -4,12 +4,14 @@ import Base from '../../layouts/Base.astro';
 const cases = [
   {
     tag: 'performance',
+    slug: 'import-calc-performance',
     title: 'From a site-wide outage to the right metric',
     teaser:
       'Import calculation flooded a config API and took the platform down. Profiling cut the hot-path request count 84% (925 → 151 req/s) — then a service-time analysis corrected the obvious conclusion and found the real bottleneck elsewhere.',
   },
   {
     tag: 'async design',
+    slug: 'sync-to-async-export',
     title: 'Killing the 60-second timeout: queue-ifying a million-datapoint export',
     teaser:
       'A 300-plant customer export (~820k datapoints) could never survive a synchronous 60s window. Redesigned as a queue-backed worker with hash-based job dedup, object-storage delivery, and per-user push notification.',
@@ -52,13 +54,22 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 
   <div class="case-list">
     {
-      cases.map((c) => (
-        <div class="card">
-          <span class="tag">{c.tag}</span>
-          <h3>{c.title}</h3>
-          <p>{c.teaser}</p>
-        </div>
-      ))
+      cases.map((c) =>
+        c.slug ? (
+          <a class="card" href={`${base}/work/${c.slug}/`}>
+            <span class="tag">{c.tag}</span>
+            <h3>{c.title}</h3>
+            <p>{c.teaser}</p>
+          </a>
+        ) : (
+          <div class="card">
+            <span class="tag">{c.tag}</span>
+            <h3>{c.title}</h3>
+            <p>{c.teaser}</p>
+            <p class="muted" style="margin-top:0.5rem;font-size:0.8rem;">Write-up in progress</p>
+          </div>
+        ),
+      )
     }
   </div>
 </Base>

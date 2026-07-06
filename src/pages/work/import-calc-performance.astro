@@ -1,0 +1,119 @@
+---
+import Base from '../../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base title="From a site-wide outage to the right metric — Andrew Yang">
+  <p><a href={`${base}/work/`}>← Case studies</a></p>
+  <span class="tag">performance</span>
+  <h1>From a site-wide outage to the right metric</h1>
+  <p class="lede">
+    A production outage pointed at one service. Profiling cut its request load by
+    84% — and then a service-time analysis showed that the obvious conclusion was
+    wrong, and the real risks were two layers deeper.
+  </p>
+
+  <h2>Context</h2>
+  <p>
+    The platform monitors thousands of solar plants. Every time new measurement
+    data arrives, a calculation pipeline recomputes KPIs — availability,
+    performance ratio, energy — for the affected system. The pipeline is
+    queue-driven and runs continuously at roughly 150 calculation dispatches per
+    second across the fleet.
+  </p>
+
+  <h2>Problem</h2>
+  <p>
+    A site-wide performance outage: the calculation pipeline generated enough
+    traffic against the system-topology service to degrade the whole platform.
+    A quick workaround (a cache in front of the hottest call) stopped the
+    bleeding. I took the follow-up: find out what the pipeline was actually
+    doing to its dependencies, and fix it structurally.
+  </p>
+
+  <h2>Measurement first</h2>
+  <p>
+    I surveyed the data flow of one calculation run — every module, every
+    external source it touched — into a module-by-source matrix. Two findings
+    stood out:
+  </p>
+  <ul class="clean">
+    <li>
+      The dispatch stage made <strong>four uncached calls to the KPI
+      configuration service per run</strong> — just to decide which modules to
+      execute.
+    </li>
+    <li>
+      The KPI configuration service was receiving <strong>925 requests per
+      second, 100% of it from the calculation pipeline</strong>, almost all on a
+      single config endpoint. Calculation delay had drifted to a median of ~9
+      minutes against a ~5-minute baseline.
+    </li>
+  </ul>
+
+  <h2>Design: resolve every input once</h2>
+  <p>
+    The structural fix was a per-run <strong>calculation context with data
+    slots</strong>: each input a run needs — KPI configuration, device topology,
+    measurement series — is resolved exactly once and shared by every module in
+    that run, replacing fetch-as-you-go. Config lookups collapsed into one slot;
+    the device-topology slot became shared by five modules.
+  </p>
+  <p>
+    Result: KPI-config requests dropped from <strong>925 to 151 req/s — an 84%
+    reduction in request count</strong> — and the hottest topology route roughly
+    halved.
+  </p>
+
+  <h2>Then the correction</h2>
+  <p>
+    Here is the part I consider the real work. Before declaring victory I redid
+    the analysis on a <strong>service-time axis</strong> (requests/s × latency)
+    instead of request counts — and the conclusion changed:
+  </p>
+  <ul class="clean">
+    <li>
+      The config endpoint averaged ~0.9 ms. 925 req/s of it is under one CPU
+      core of work. <strong>The KPI service was never the load bottleneck</strong> —
+      the −84% was a count reduction, not a load reduction.
+    </li>
+    <li>
+      The genuine outage shape lived in the topology service: an endpoint at
+      only ~28 req/s whose tail latency reached <strong>30 seconds</strong>,
+      accounting for ~41% of that service's total service time.
+    </li>
+    <li>
+      The dominant <em>compute</em> cost was elsewhere again: one module family
+      accounted for <strong>52.6% of all calculation CPU</strong>, and 81–93% of
+      its time was round-trips to the measurement-data API.
+    </li>
+  </ul>
+  <p>
+    So the honest value of the data-slot design is different from the headline
+    number: it <strong>eliminated an unguarded-external-dependency outage
+    class</strong> (the pipeline can no longer flood a dependency by design) and
+    cut per-run wall-time by removing redundant round-trips. The follow-up
+    priorities went to the 30-second tail and the compute-heavy module — where
+    the service-time math said they belonged.
+  </p>
+
+  <h2>Impact</h2>
+  <ul class="clean">
+    <li>The outage class is gone: every external input is fetched once, behind a slot, per run.</li>
+    <li>Hot-path request count −84%; hottest topology route ~−50%.</li>
+    <li>
+      My batch-prefetch proposal for the measurement-data round-trips was
+      ultimately declined in favor of a deeper rework of that module family —
+      built on the same measurements. The diagnosis was adopted; the remedy
+      went further than my patch. That is how it should work.
+    </li>
+  </ul>
+
+  <h2>What I'd tell my past self</h2>
+  <p>
+    Request count, service time, and compute are three different axes, and an
+    outage only tells you which one screamed first. If I had shipped the slot
+    design and stopped at "−84%", the 30-second tail would still be waiting for
+    the next incident to make the point for me.
+  </p>
+</Base>

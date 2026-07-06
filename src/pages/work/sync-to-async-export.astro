@@ -1,0 +1,90 @@
+---
+import Base from '../../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base title="Killing the 60-second timeout — Andrew Yang">
+  <p><a href={`${base}/work/`}>← Case studies</a></p>
+  <span class="tag">async design</span>
+  <h1>Killing the 60-second timeout: queue-ifying a million-datapoint export</h1>
+  <p class="lede">
+    Some requests cannot be made fast enough — they have to stop being requests.
+    Redesigning a synchronous CSV export into a queue-backed job system, with the
+    design documents to match.
+  </p>
+
+  <h2>Context</h2>
+  <p>
+    The monitoring platform lets customers export measurement data as CSV. The
+    original implementation was fully synchronous: HTTP request in, CSV out, with
+    the web server enforcing a 60-second timeout on everything.
+  </p>
+
+  <h2>Problem</h2>
+  <p>
+    A customer with a ~300-plant portfolio requested an export of roughly
+    <strong>820,000 datapoints</strong> — reproducibly dead at the 60-second
+    wall, and no amount of query tuning was going to buy a 10× margin. The
+    system also had an explicit ceiling of one million datapoints per export
+    hardcoded in three places, so "just make it faster" had already been tried
+    by history.
+  </p>
+
+  <h2>Design</h2>
+  <p>The fix is architectural: turn the request into a job.</p>
+  <ul class="clean">
+    <li>
+      <strong>Dedup by construction:</strong> a job table keyed by a
+      <strong>hash of the export parameters</strong>, with find-or-create
+      semantics — two users (or one impatient user double-clicking) requesting
+      the same export share one job instead of running the heavy query twice.
+    </li>
+    <li>
+      <strong>A queue-backed worker:</strong> export jobs go onto a message
+      queue; a worker generates the CSV off the request path and writes it to
+      object storage. The web request returns immediately with the job handle.
+    </li>
+    <li>
+      <strong>Completion push, not polling:</strong> the requesting user gets a
+      per-user push notification when the file is ready to download.
+    </li>
+    <li>
+      <strong>Lifecycle hygiene:</strong> a state machine for the job
+      (requested → processing → done/failed), a cleanup cron that expires
+      generated files after three days, and the datapoint ceiling enforced in
+      one place instead of three.
+    </li>
+  </ul>
+  <p>
+    The deliverable included the full design documentation — sequence diagram,
+    job state machine, API contract, and the dedup table DDL — so the design was
+    reviewable before the first line of implementation.
+  </p>
+
+  <h2>Impact</h2>
+  <ul class="clean">
+    <li>
+      The timeout failure mode is eliminated <em>by construction</em> — export
+      duration and HTTP timeouts are no longer coupled at all.
+    </li>
+    <li>
+      Duplicate heavy exports collapse into one job; the expensive path is
+      protected from accidental self-DoS.
+    </li>
+    <li>
+      The pattern generalizes: any "generate something big on demand" feature on
+      the platform now has a reference architecture to copy.
+    </li>
+  </ul>
+
+  <h2>What I'd tell my past self</h2>
+  <p>
+    The interesting decision wasn't the queue — it was recognizing that a
+    latency problem was actually a <em>product-shape</em> problem. Once the
+    export became a job with an identity (the parameter hash), everything else —
+    dedup, retries, notification, cleanup — followed from ordinary engineering.
+    I run the same playbook in my <a href={`${base}/demo/`}>ai-radar demo</a>,
+    where the budget circuit breaker parks work in the queue for the next
+    window: queues are for decoupling "accepted" from "done".
+  </p>
+</Base>
