@@ -1,0 +1,83 @@
+---
+import Base from '../../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base title="Turning 800 read books into infrastructure — Andrew Yang">
+  <p><a href={`${base}/lab/`}>← Lab</a></p>
+  <span class="tag">knowledge systems</span>
+  <h1>Turning 800 read books into infrastructure</h1>
+  <p class="lede">
+    I read a lot, and I keep structured notes — roughly 800 books distilled into
+    a <a href={`${base}/platform/`}>1,477-repository platform</a>. That corpus
+    is the actual moat: not the tooling around it, but the accumulated judgment
+    inside it. The engineering question became: how do you make a decade of
+    reading <em>queryable</em> — first for a human, then for machines?
+  </p>
+
+  <h2>Generation 1 — notes for humans</h2>
+  <p>
+    Hugo book sites, one repository per book, chapters as markdown. Perfect for
+    re-reading, useless for asking questions across the collection. "Which books
+    say something about this?" meant remembering, which stops scaling around
+    book two hundred.
+  </p>
+
+  <h2>Generation 2 — an index for search</h2>
+  <p>
+    Everything distilled into one SQLite file: a chapter tree per book,
+    trigram full-text search (chosen because CJK text breaks word-boundary
+    tokenizers), and vector embeddings at both book and chapter level. Hybrid
+    search with two deliberate modes — <em>find</em> (which books should I
+    consult?) ranks books; <em>echo</em> (which passages respond to this
+    paragraph?) ranks passages. Different questions, different rankings, one
+    index.
+  </p>
+
+  <h2>Generation 3 — an API for machines</h2>
+  <p>
+    A small bridge service puts the index behind an authenticated machine API,
+    and the interesting consumer is not a human: the
+    <a href={`${base}/lab/async-pipeline-three-generations/`}>news pipeline</a>
+    calls it for every incoming item and asks, in effect, <em>"does anything I
+    have read resonate with this?"</em> Cosine distance against the corpus is
+    the editorial gate — items that echo nothing I know get dropped. My reading
+    history literally decides what gets published.
+  </p>
+  <ul class="clean">
+    <li>
+      <strong>Distance, not rank, at the gate:</strong> fused ranking scores
+      only order results within one query; the go/no-go threshold must use raw
+      cosine distance, or the gate's meaning changes with every query. Found by
+      testing, recorded as an ADR.
+    </li>
+    <li>
+      <strong>Tools wrap the database:</strong> assistants and services go
+      through CLI/API wrappers that clean shortcodes and enforce read-only
+      access — the raw notes and the index stay authoritative and unwritable
+      from the consuming side.
+    </li>
+    <li>
+      <strong>The index is derived, the notes are truth:</strong> the SQLite
+      file can be rebuilt from the repositories at any time. One direction of
+      derivation, no second source of truth.
+    </li>
+  </ul>
+
+  <h2>Why this is the moat</h2>
+  <p>
+    Any engineer can wire up vector search in an afternoon — the retrieval
+    stack is commodity. What cannot be copied is the corpus: 800 books of
+    structured, personally-distilled notes, accumulated over years, with a
+    taxonomy that makes them navigable. The system's quality ceiling is set by
+    the knowledge inside it, and that is exactly the asset that compounds.
+  </p>
+
+  <h2>What I'd tell my past self</h2>
+  <p>
+    Structure the notes as if a machine will read them, years before any
+    machine does. The chapter trees, front-matter and taxonomy felt like
+    over-engineering for a personal library; they turned out to be the entire
+    reason generations 2 and 3 were cheap.
+  </p>
+</Base>

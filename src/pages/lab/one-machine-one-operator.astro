@@ -1,0 +1,106 @@
+---
+import Base from '../../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base title="One machine, one operator, no silent failures — Andrew Yang">
+  <p><a href={`${base}/lab/`}>← Lab</a></p>
+  <span class="tag">operations</span>
+  <h1>One machine, one operator, no silent failures</h1>
+  <p class="lede">
+    My production box runs LINE bots with real users, a news pipeline, MySQL,
+    Postgres, CI runners, and the monitoring that watches all of it. One
+    operator, no team, no on-call rotation. The design constraint that shaped
+    everything: <strong>any failure that stays silent will stay forever.</strong>
+  </p>
+
+  <h2>Generation 1 — a directory that is production</h2>
+  <p>
+    Docker compose, deployed by SSH-ing in and pulling. It worked until the day
+    prod and git silently diverged — someone edited compose on the host without
+    committing, while a pushed change never got applied. Two sources of truth,
+    each partly right, nothing to notice.
+  </p>
+
+  <h2>Generation 2 — GitOps-lite: every fact gets one home and a guard</h2>
+  <ul class="clean">
+    <li>
+      <strong>An environment contract:</strong> a machine-readable file declaring
+      which env keys must exist and which secrets must match across files —
+      because a mismatched webhook secret fails closed, and no alert arrives to
+      say the alerting broke.
+    </li>
+    <li>
+      <strong>CI deploy with preflight, verify, rollback:</strong> deployment
+      compares against the last <em>verified</em> state, not git history —
+      because after a rollback, those two disagree.
+    </li>
+    <li>
+      <strong>Drift detection as a metric:</strong> an hourly reconciliation
+      check exporting commits-behind, dirty-worktree, containers-pending —
+      borrowed from Kubernetes' control loop, at a human-scale frequency.
+    </li>
+    <li>
+      <strong>Cron jobs that report to Prometheus:</strong> backups, cert
+      renewal, firewall checks all write textfile metrics. A backup that failed
+      for four days into a log nobody reads is what created this rule.
+    </li>
+  </ul>
+
+  <h2>Generation 3 — dual runtime, then convergence</h2>
+  <p>
+    Applications moved into k3s under Argo CD; the host kept the base layer.
+    Migration created duplicates — two monitoring stacks, two deploy models,
+    hand-fed secrets — and the discipline was in converging them one seam at a
+    time, each cutover verified before the old side was retired:
+  </p>
+  <ul class="clean">
+    <li>
+      <strong>Monitoring:</strong> dual-run with shadow notifications, alert
+      parity proven with a synthetic end-to-end test, then the old stack
+      retired. The mutual-watch pattern died with it — replaced by a dead-man
+      switch: the always-firing Watchdog alert heartbeats to an external
+      service, so even "the monitoring died" has a voice that doesn't live on
+      the machine.
+    </li>
+    <li>
+      <strong>The edge:</strong> host nginx and certbot handed over to
+      ingress-nginx and cert-manager — after every routing quirk (an
+      encoded-slash API path, a prefix-stripping proxy, basic-auth) was ported
+      and matrix-tested against the new stack while the old one still held the
+      ports.
+    </li>
+    <li>
+      <strong>Secrets:</strong> hand-applied cluster secrets became
+      SOPS-encrypted manifests the cluster decrypts itself; Argo CD now manages
+      its own installation. Bootstrap trust reduced to one key.
+    </li>
+    <li>
+      <strong>CI runners:</strong> one fleet split into two by privilege — the
+      deploy runner keeps host access; build runners for public-ish workloads
+      run as a user that cannot read secrets or reach the container socket.
+      The label is the security boundary.
+    </li>
+  </ul>
+
+  <h2>The method, extracted</h2>
+  <p>
+    Three rules did most of the work. <strong>Every fact has one home</strong>,
+    and a machine compares reality against it — contracts, drift checks,
+    template-rendered configs. <strong>Every failure mode gets a voice</strong> —
+    and "the voice itself failed" is also a failure mode, all the way up to the
+    external heartbeat. <strong>Every decision is written down with the
+    criteria that would reverse it</strong> — including the things deliberately
+    not done, so they don't get re-litigated. The TODO list has entries that
+    say "evaluated, don't redo" with reasons; that file is as much
+    infrastructure as the firewall.
+  </p>
+
+  <h2>What I'd tell my past self</h2>
+  <p>
+    Rehearse the cold boot before reality schedules one for you. The reboot
+    drill found nothing broken — but only because three days of convergence
+    work had been verified seam by seam. The drill isn't where you find
+    problems; it's where you prove you stopped creating them.
+  </p>
+</Base>

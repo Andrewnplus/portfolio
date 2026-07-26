@@ -1,0 +1,83 @@
+---
+import Base from '../../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base title="Three generations of the same pipeline — Andrew Yang">
+  <p><a href={`${base}/lab/`}>← Lab</a></p>
+  <span class="tag">async pipelines</span>
+  <h1>Three generations of the same pipeline</h1>
+  <p class="lede">
+    The problem never changed: take content in, enrich it with AI, publish it
+    somewhere durable. I have now built that pipeline three times. Each
+    generation exists because the previous one hit a wall worth naming.
+  </p>
+
+  <h2>Generation 1 — a queue made of files</h2>
+  <p>
+    The book-repository provisioning CLI: a YAML queue on disk, a two-phase
+    workflow where the CLI writes a request file, an AI session answers into a
+    response file, and the CLI resumes. Idempotent by design — re-runs are safe,
+    duplicates are detected against a cached index.
+  </p>
+  <p>
+    It works, and still runs today. Its wall: <strong>files are a queue with no
+    semantics</strong>. No retry, no dead-lettering, no delivery guarantee, no
+    observability. Fine when the operator is the failure handler; a dead end the
+    moment anything must run unattended.
+  </p>
+
+  <h2>Generation 2 — a real broker, learned properly</h2>
+  <p>
+    <a href={`${base}/demo/`}>ai-radar</a> rebuilt the idea on RabbitMQ with the
+    semantics gen 1 lacked: idempotent consumers, a TTL+DLX retry ladder, DLQ
+    replay tooling, and an LLM cost circuit breaker. This is where I learned
+    what a delivery guarantee actually costs to provide.
+  </p>
+  <p>
+    Its wall was different: <strong>a pipeline that only moves data is not yet a
+    product</strong>. Radar-style output (here is everything that happened) has
+    no editorial judgment — and judgment was the interesting part.
+  </p>
+
+  <h2>Generation 3 — a pipeline with an opinion</h2>
+  <p>
+    bookshelf-echo, the production successor: five services (producers →
+    enricher → matcher → digester → publisher) around the same broker patterns,
+    plus the two things gen 2 was missing.
+  </p>
+  <ul class="clean">
+    <li>
+      <strong>An editorial gate:</strong> every news item is matched against my
+      library of ~800 read books through a vector-search API (the
+      <a href={`${base}/lab/knowledge-as-infrastructure/`}>knowledge engine</a>).
+      Only items that <em>resonate with something I have actually read</em> pass —
+      the pipeline publishes echoes, not headlines.
+    </li>
+    <li>
+      <strong>A security posture as an ADR:</strong> zero-inbound — every port
+      binds loopback, with each exception (metrics scrape, management UI behind
+      the edge) documented as a deliberate breach of the rule, not an accident.
+    </li>
+    <li>
+      <strong>A durable output end:</strong> a publish queue feeding a static
+      site generator, so the pipeline's product is a website, not a log.
+    </li>
+  </ul>
+
+  <h2>What forced each evolution</h2>
+  <p>
+    Gen 1 → 2: the need to run unattended exposed that files have no failure
+    semantics. Gen 2 → 3: running reliably exposed that reliability was never
+    the point — <em>selection</em> was. Each generation kept the invariant
+    (async, idempotent, inspectable) and replaced exactly the layer that failed.
+  </p>
+
+  <h2>What I'd tell my past self</h2>
+  <p>
+    Don't skip generation 1. The file queue taught the shape of the problem for
+    the price of a weekend; the broker then had a real workload to justify every
+    piece of its complexity. Architecture bought before the failure that demands
+    it is just inventory.
+  </p>
+</Base>

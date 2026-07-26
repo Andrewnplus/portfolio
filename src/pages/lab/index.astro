@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+
+// Lab = 個人系統的「設計演進」故事。與 /work/ 的分工：work 講「在公司
+// 解決過什麼」，lab 講「同一個想法如何跨世代演進」——方法與判斷力的
+// 展示區，不是技術清單。每篇的骨架：不變的問題 → 每一代長什麼樣 →
+// 是什麼逼出下一代 → 方法上學到什麼。
+const cases = [
+  {
+    tag: 'async pipelines',
+    slug: 'async-pipeline-three-generations',
+    title: 'Three generations of the same pipeline',
+    teaser:
+      'A file-based queue, then a real broker with retry topology, then a five-service production pipeline with an editorial gate. Same problem, three answers — each one forced by a failure of the last.',
+  },
+  {
+    tag: 'operations',
+    slug: 'one-machine-one-operator',
+    title: 'One machine, one operator, no silent failures',
+    teaser:
+      'How a single prod box evolved from hand-run compose to a dual-runtime platform where every config has one source of truth, every failure mode has a voice, and even the monitoring has an external dead-man switch.',
+  },
+  {
+    tag: 'knowledge systems',
+    slug: 'knowledge-as-infrastructure',
+    title: 'Turning 800 read books into infrastructure',
+    teaser:
+      'Reading notes became a queryable engine: full-text + vector search over ~800 books, served to machines through an authenticated API — so a news pipeline can ask "which of my books resonate with this?"',
+  },
+  {
+    tag: 'design judgment',
+    slug: 'judgment-in-production',
+    title: 'Judgment calls, written down',
+    teaser:
+      'A pricing engine that prefers blanks over guesses, an alert channel that must not report its own death, and a metric that measured the wrong thing — small systems where the design decision is the product.',
+  },
+];
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base title="Lab — Andrew Yang">
+  <h1>The lab: how my designs evolve</h1>
+  <p class="lede">
+    My personal platform is where I test what I believe about engineering. The
+    moat here is not any single technology — it is the method: one source of
+    truth per fact, machine-enforced; silent failure modes hunted down until
+    each has a voice; decisions recorded with the criteria that would change
+    them. These stories show the same ideas evolving across generations of
+    systems, each generation forced by a real failure of the last.
+  </p>
+
+  <div class="case-list">
+    {
+      cases.map((c) => (
+        <a class="card" href={`${base}/lab/${c.slug}/`}>
+          <span class="tag">{c.tag}</span>
+          <h3>{c.title}</h3>
+          <p>{c.teaser}</p>
+        </a>
+      ))
+    }
+  </div>
+</Base>

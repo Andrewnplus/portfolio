@@ -1,0 +1,73 @@
+---
+import Base from '../../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base title="Judgment calls, written down — Andrew Yang">
+  <p><a href={`${base}/lab/`}>← Lab</a></p>
+  <span class="tag">design judgment</span>
+  <h1>Judgment calls, written down</h1>
+  <p class="lede">
+    My LINE bots serve real users — a restaurant takes orders through one. Small
+    systems, but production is production: money is counted, alerts wake
+    people, and AI output meets reality. Three design calls from that world,
+    each one a rule I now carry.
+  </p>
+
+  <h2>1. Prefer a blank over a guess</h2>
+  <p>
+    An ordering bot uses an LLM to parse free-form customer messages into order
+    lines. Reconciliation against the restaurant's books surfaced the failure
+    class: the model would "helpfully" normalize a vague item name onto the
+    menu — turning a customer's "assorted, 800" into a menu item priced 210.
+  </p>
+  <p>
+    The fix was not a better prompt. The pricing engine became deterministic
+    with an explicit priority order — customer-stated price, then daily menu,
+    then lexicon — and a hard rule: <strong>if no source resolves it, the total
+    stays blank for a human</strong>. Platter-style words never fall back to
+    menu prices at all. The AI proposes; the engine is the guardrail; blanks
+    are cheaper than wrong totals.
+  </p>
+
+  <h2>2. The broken thing must not report its own death</h2>
+  <p>
+    Engineering alerts once shared a bot with the product features they watched
+    over — meaning a dead bot would be responsible for announcing that it was
+    dead. Alerts moved to a dedicated ops bot, separated from the
+    conversational one, so a product-side failure cannot silence its own alarm.
+    The same principle, one level up, gave the monitoring stack an
+    <a href={`${base}/lab/one-machine-one-operator/`}>external dead-man
+    switch</a> — the chain of "who watches X" has to terminate somewhere off
+    the machine.
+  </p>
+
+  <h2>3. Ask what a metric actually measures</h2>
+  <p>
+    The obvious silence alarm — "no webhook events for N hours" — measures user
+    activity, not service health: a chat platform only delivers webhooks when
+    someone talks. For a low-traffic bot it alarms on quiet days and misses
+    real deaths after restarts, because the metric resets with the process. The
+    replacement watches config-presence and rejection counters — signals that
+    exist independently of whether users happen to be talking — and the
+    long-term answer (a database-backed freshness gauge) is recorded as a known
+    limitation next to the code, so nobody rediscovers it the hard way.
+  </p>
+
+  <h2>The pattern</h2>
+  <p>
+    None of these are technology decisions — the stack is ordinary. Each is a
+    judgment about <em>failure asymmetry</em>: a blank beats a wrong price, a
+    redundant channel beats an eloquent corpse, a boring-but-honest metric
+    beats a rich-but-lying one. Writing the judgment down where the code lives —
+    with the incident that motivated it — is what makes it transferable.
+  </p>
+
+  <h2>What I'd tell my past self</h2>
+  <p>
+    When AI is in the loop, design the system so that the AI's confidence is
+    an input, never a verdict. Every place I let a model's output flow straight
+    into a number someone trusts, reconciliation eventually found the cost of
+    that shortcut.
+  </p>
+</Base>
