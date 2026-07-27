@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
@@ -32,6 +34,33 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 
   <h2>Design</h2>
   <p>The fix is architectural: turn the request into a job.</p>
+
+  <Diagram
+    viewBox="0 0 920 210"
+    alt="An export request creates a job record keyed by a hash of its parameters, returning a handle immediately. The job goes on a queue; a worker builds the file off the request path, writes it to object storage, and the requesting user is notified when it is ready."
+    caption="Once the export has an identity — the parameter hash — dedup, retries, notification and cleanup all follow from ordinary engineering."
+  >
+    <DBox x={10} y={24} title="Export request" sub="returns immediately with a handle" />
+    <DBox
+      x={335}
+      y={24}
+      accent
+      title="Job record"
+      sub="keyed by a hash of the parameters,"
+      sub2="duplicates collapse into one job"
+    />
+    <DBox x={660} y={24} title="Queue" sub="the wait leaves the request path" />
+
+    <DBox x={660} y={134} title="Worker" sub="builds the file off the request path" />
+    <DBox x={335} y={134} title="Object storage" sub="the file expires on a schedule" />
+    <DBox x={10} y={134} title="Push notification" sub="the user is told when it is ready" />
+
+    <path class="flow" d="M240,54 L329,54" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M565,54 L654,54" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M775,84 L775,128" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M660,164 L571,164" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M335,164 L246,164" marker-end="url(#d-arrow)" />
+  </Diagram>
   <ul class="clean">
     <li>
       <strong>Dedup by construction:</strong> a job table keyed by a
@@ -83,7 +112,8 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
     latency problem was actually a <em>product-shape</em> problem. Once the
     export became a job with an identity (the parameter hash), everything else —
     dedup, retries, notification, cleanup — followed from ordinary engineering.
-    I run the same playbook in my <a href={`${base}/demo/`}>ai-radar demo</a>,
+    I run the same playbook in my
+    <a href={`${base}/demo/bookshelf-echo/`}>bookshelf-echo demo</a>,
     where the budget circuit breaker parks work in the queue for the next
     window: queues are for decoupling "accepted" from "done".
   </p>

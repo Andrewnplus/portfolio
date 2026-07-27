@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
@@ -52,6 +54,53 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
   </ul>
 
   <h2>Design: resolve every input once</h2>
+
+  <Diagram
+    viewBox="0 0 920 268"
+    alt="Before, every calculation module fetched its own inputs directly from the KPI configuration and topology services, producing 925 requests per second. After, the modules read from a run context that resolves each input once, leaving 151 requests per second."
+    caption="The structural point is not the smaller number — it is that a module can no longer reach a dependency on its own, so the pipeline cannot flood one by accident."
+  >
+    <text class="ph" x="225" y="16" text-anchor="middle">
+      Before — fetch as you go, four uncached calls per run
+    </text>
+    <DBox x={10} y={32} w={132} h={36} title="Module A" />
+    <DBox x={167} y={32} w={132} h={36} title="Module B" />
+    <DBox x={319} y={32} w={132} h={36} title="Module C" />
+    <DBox
+      x={10}
+      y={196}
+      w={441}
+      h={56}
+      title="KPI config + topology services"
+      sub="925 req/s — all of it from this pipeline"
+    />
+    <path class="flow" d="M76,68 L76,190" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M233,68 L233,190" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M385,68 L385,190" marker-end="url(#d-arrow)" />
+
+    <line class="divider" x1="467" y1="4" x2="467" y2="264" />
+
+    <text class="ph" x="697" y="16" text-anchor="middle">
+      After — every input resolved once, then shared
+    </text>
+    <DBox x={485} y={32} w={132} h={36} title="Module A" />
+    <DBox x={631} y={32} w={132} h={36} title="Module B" />
+    <DBox x={778} y={32} w={132} h={36} title="Module C" />
+    <DBox x={485} y={116} w={425} h={44} accent title="Run context — one slot per input" />
+    <DBox
+      x={485}
+      y={196}
+      w={425}
+      h={56}
+      title="KPI config + topology services"
+      sub="151 req/s — 84% fewer requests"
+    />
+    <path class="flow" d="M551,68 L551,110" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M697,68 L697,110" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M844,68 L844,110" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M697,160 L697,190" marker-end="url(#d-arrow)" />
+  </Diagram>
+
   <p>
     The structural fix was a per-run <strong>calculation context with data
     slots</strong>: each input a run needs — KPI configuration, device topology,

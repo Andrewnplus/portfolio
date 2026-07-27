@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
@@ -24,6 +26,67 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
   </p>
 
   <h2>Design</h2>
+
+  <Diagram
+    viewBox="0 0 920 226"
+    alt="Three phases on a timeline: the legacy device model with hundreds of live systems writing every interval; a transition window in which both models exist and the calculation pipeline creates the new device on demand and backfills the gap; and the new power-plant-controller model with setpoint calculation cut over exactly once. The gap window is the design surface, and a year later virtual controllers shipped as an extension rather than another migration."
+    caption="The script was never the hard part. The middle panel is — every reader and writer of the old model needs a decision about what happens during the window, not only after it."
+  >
+    <DBox
+      x={10}
+      y={36}
+      w={286}
+      h={64}
+      title="Before"
+      sub="the legacy device model, with"
+      sub2="hundreds of live systems writing"
+    />
+    <DBox
+      x={317}
+      y={36}
+      w={286}
+      h={64}
+      accent
+      title="The transition window"
+      sub="both models exist; data can land on either"
+      sub2="side, so the gap is backfilled on demand"
+    />
+    <DBox
+      x={624}
+      y={36}
+      w={286}
+      h={64}
+      title="After"
+      sub="the power-plant-controller model,"
+      sub2="setpoint calculation cut over once"
+    />
+
+    <path class="flow" d="M296,68 L311,68" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M603,68 L618,68" marker-end="url(#d-arrow)" />
+
+    <DBox
+      x={317}
+      y={150}
+      w={286}
+      h={60}
+      dashed
+      title="No interval goes missing"
+      sub="and no interval is calculated twice"
+    />
+    <DBox
+      x={624}
+      y={150}
+      w={286}
+      h={60}
+      dashed
+      title="A year later"
+      sub="virtual controllers were an extension,"
+      sub2="not another migration"
+    />
+    <path class="flow dash" d="M460,100 L460,144" marker-end="url(#d-arrow)" />
+    <path class="flow dash" d="M767,100 L767,144" marker-end="url(#d-arrow)" />
+  </Diagram>
+
   <ul class="clean">
     <li>
       <strong>Migration script as a first-class deliverable:</strong> device and

@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
@@ -24,6 +26,54 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
   </p>
 
   <h2>The platform, not the plumbing</h2>
+
+  <Diagram
+    viewBox="0 0 920 200"
+    alt="Every vendor integration follows the same seven steps in the same order: importer, preprocessor, registration, scheduling, backup, API spec, docs. Two engineered properties hang off that path: a daily completeness audit that re-fetches gaps automatically, and separate lanes so bulk backfill and realtime traffic do not compete."
+    caption="The deliverable is the row of boxes, not any one integration. A step that is not templated is a future incident."
+  >
+    <text class="ph" x="465" y="20" text-anchor="middle">
+      The same seven steps, in the same order, for every vendor
+    </text>
+    <DBox x={10} y={40} w={115} h={44} title="Importer" />
+    <DBox x={142} y={40} w={115} h={44} title="Preprocessor" />
+    <DBox x={274} y={40} w={115} h={44} title="Register" />
+    <DBox x={406} y={40} w={115} h={44} title="Schedule" />
+    <DBox x={538} y={40} w={115} h={44} title="Backup" />
+    <DBox x={670} y={40} w={115} h={44} title="API spec" />
+    <DBox x={802} y={40} w={115} h={44} title="Docs" />
+
+    <path class="flow" d="M125,62 L136,62" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M257,62 L268,62" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M389,62 L400,62" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M521,62 L532,62" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M653,62 L664,62" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M785,62 L796,62" marker-end="url(#d-arrow)" />
+
+    <DBox
+      x={10}
+      y={130}
+      w={440}
+      h={56}
+      accent
+      title="Daily completeness audit"
+      sub="gaps re-fetched on the next cycle — a source-side"
+      sub2="outage heals within the hour, with nobody watching"
+    />
+    <DBox
+      x={470}
+      y={130}
+      w={440}
+      h={56}
+      accent
+      title="Separate lanes"
+      sub="bulk backfill and realtime ingestion stopped"
+      sub2="competing for the same vendor-side quota"
+    />
+    <path class="flow dash" d="M67,84 L67,124" marker-end="url(#d-arrow)" />
+    <path class="flow dash" d="M463,84 L463,106 L690,106 L690,124" marker-end="url(#d-arrow)" />
+  </Diagram>
+
   <ul class="clean">
     <li>
       <strong>A fixed onboarding path:</strong> importer → preprocessor →

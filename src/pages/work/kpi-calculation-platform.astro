@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
@@ -22,6 +24,40 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
   </p>
 
   <h2>Six models, one service</h2>
+
+  <Diagram
+    viewBox="0 0 920 210"
+    alt="A loss model starts as a formula, becomes an OpenAPI contract that generates the server and both clients, then a database schema for per-device daily values, a Kotlin service endpoint, a calculation module inside the import pipeline, and finally aggregation performed in the database for coarser resolutions."
+    caption="The same chain runs for every KPI. That is the deliverable: the first one cuts the groove, and each one after it is a copy — mistakes included, which is why the first schema has to be right."
+  >
+    <DBox x={10} y={24} title="The model" sub="a formula, one per data situation" />
+    <DBox x={335} y={24} title="OpenAPI contract" sub="generates server and both clients" />
+    <DBox
+      x={660}
+      y={24}
+      accent
+      title="Database schema"
+      sub="per-device daily values —"
+      sub2="a pattern that did not exist yet"
+    />
+
+    <DBox x={660} y={134} title="Service endpoint" sub="the number customers bill against" />
+    <DBox x={335} y={134} title="Calculation module" sub="runs inside the import pipeline" />
+    <DBox
+      x={10}
+      y={134}
+      title="Coarser resolutions"
+      sub="aggregated in the database, not"
+      sub2="hauled across the wire and summed"
+    />
+
+    <path class="flow" d="M240,54 L329,54" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M565,54 L654,54" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M775,84 L775,128" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M660,164 L571,164" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M335,164 L246,164" marker-end="url(#d-arrow)" />
+  </Diagram>
+
   <p>
     I built the yield-loss calculation service from specification to production:
     <strong>six loss models</strong> — simulation-based, linear-equation,

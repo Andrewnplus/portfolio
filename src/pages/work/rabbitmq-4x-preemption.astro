@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
@@ -33,6 +35,33 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
   </p>
 
   <h2>Approach</h2>
+
+  <Diagram
+    viewBox="0 0 920 210"
+    alt="The release note is read as a diff against our own topology; an audit of three language bindings finds two at risk; the rejection is reproduced on the new broker in dev; the declaration is fixed with its semantics preserved; the library is released and every consumer bumped; the upgrade then lands on a fleet that is already compatible."
+    caption="Nothing in this sequence is clever. The only decision that mattered was doing it before the upgrade window rather than during it."
+  >
+    <DBox x={10} y={24} title="Release note" sub="read as a diff against our topology" />
+    <DBox x={335} y={24} title="Audit the fleet" sub="three bindings, two of them at risk" />
+    <DBox x={660} y={24} title="Reproduce in dev" sub="confirm it before believing it" />
+
+    <DBox
+      x={660}
+      y={134}
+      title="Fix, semantics preserved"
+      sub="one private queue per instance —"
+      sub2="what the library always wanted"
+    />
+    <DBox x={335} y={134} title="Roll out first" sub="library released, consumers bumped" />
+    <DBox x={10} y={134} accent title="The upgrade lands" sub="on a fleet already compatible" />
+
+    <path class="flow" d="M240,54 L329,54" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M565,54 L654,54" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M775,84 L775,128" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M660,164 L571,164" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M335,164 L246,164" marker-end="url(#d-arrow)" />
+  </Diagram>
+
   <ul class="clean">
     <li>
       <strong>Read the release notes like a diff against our topology.</strong>
@@ -68,7 +97,8 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
     Broker upgrades are schema migrations for your message topology — treat
     release notes as breaking-change lists, and treat queue declarations as
     code you own even when they live in a library someone else wrote. My
-    <a href={`${base}/demo/`}>ai-radar demo</a> encodes this as a runbook rule:
+    <a href={`${base}/demo/bookshelf-echo/`}>bookshelf-echo demo</a> encodes this
+    as a runbook rule:
     no broker minor bump without reading the queue-semantics changelog and
     rehearsing in a throwaway environment first.
   </p>
