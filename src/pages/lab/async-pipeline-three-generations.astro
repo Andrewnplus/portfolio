@@ -1,9 +1,13 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { facts } from '../../data/facts';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
-<Base title="Three generations of the same pipeline — Andrew Yang">
+<Base
+  title="Three generations of the same pipeline — Andrew Yang"
+  description="A file-based queue, then a real broker with retry topology, then a five-service pipeline with an editorial gate — each one forced by the last one's wall."
+>
   <p><a href={`${base}/lab/`}>← Lab</a></p>
   <span class="tag">async pipelines</span>
   <h1>Three generations of the same pipeline</h1>
@@ -50,7 +54,7 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
   <ul class="clean">
     <li>
       <strong>An editorial gate:</strong> every news item is matched against my
-      library of ~800 read books through a vector-search API (the
+      library of ~{facts.booksRead} read books through a vector-search API (the
       <a href={`${base}/lab/knowledge-as-infrastructure/`}>knowledge engine</a>).
       Only items that <em>resonate with something I have actually read</em> pass —
       the pipeline publishes echoes, not headlines.

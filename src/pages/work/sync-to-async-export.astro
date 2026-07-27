@@ -5,7 +5,10 @@ import DBox from '../../components/DBox.astro';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
-<Base title="Killing the 60-second timeout — Andrew Yang">
+<Base
+  title="Killing the 60-second timeout — Andrew Yang"
+  description="Redesigning a synchronous CSV export that could never fit a 60-second timeout into a queue-backed job system with hash-based dedup and completion push."
+>
   <p><a href={`${base}/work/`}>← Case studies</a></p>
   <span class="tag">async design</span>
   <h1>Killing the 60-second timeout: queue-ifying a million-datapoint export</h1>

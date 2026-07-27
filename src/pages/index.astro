@@ -1,9 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
+import { facts } from '../data/facts';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
-<Base title="Andrew Yang — Backend Engineer">
+<Base
+  title="Andrew Yang — Backend Engineer"
+  description="Backend engineer: vendor API ingestion, message queues and KPI services on a solar-monitoring platform — plus a knowledge platform and two live demo systems."
+>
   <h1>Backend engineer who owns data pipelines end-to-end.</h1>
   <p class="lede">
     From vendor API ingestion through message queues to KPI calculation services —
@@ -13,11 +17,11 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
   </p>
 
   <div class="stats">
-    <div class="stat"><span class="n">3+ yrs</span><span class="d">ingest-pipeline de-facto owner, cross-stack root-cause work</span></div>
-    <div class="stat"><span class="n">6+</span><span class="d">third-party vendor APIs onboarded end-to-end, each across 6 repositories</span></div>
+    <div class="stat"><span class="n">{facts.yearsOwning}+ yrs</span><span class="d">ingest-pipeline de-facto owner, cross-stack root-cause work</span></div>
+    <div class="stat"><span class="n">{facts.vendorApis}+</span><span class="d">third-party vendor APIs onboarded end-to-end, each across 6 repositories</span></div>
     <div class="stat"><span class="n">925 → 151 req/s</span><span class="d">hot-path request count −84% — then re-scoped with service-time analysis</span></div>
-    <div class="stat"><span class="n">470+</span><span class="d">tickets resolved, with the yearly volume roughly doubling</span></div>
-    <div class="stat"><span class="n">1,400+</span><span class="d">repos in a personal knowledge platform under automated governance</span></div>
+    <div class="stat"><span class="n">{facts.ticketsResolved}+</span><span class="d">tickets resolved, with the yearly volume roughly doubling</span></div>
+    <div class="stat"><span class="n">{facts.repoCount}+</span><span class="d">repos in a personal knowledge platform under automated governance</span></div>
   </div>
 
   <div class="cards">
@@ -27,7 +31,7 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
     </a>
     <a class="card" href={`${base}/platform/`}>
       <h3>Knowledge platform</h3>
-      <p>1,400+ repositories, one owner: fleet governance with convention plugins, automated dependency policy, and an AI-assisted content pipeline.</p>
+      <p>{facts.repoCount}+ repositories, one owner: fleet governance with convention plugins, automated dependency policy, and an AI-assisted content pipeline.</p>
     </a>
     <a class="card" href={`${base}/lab/`}>
       <h3>The lab — design evolution</h3>

@@ -5,7 +5,10 @@ import DBox from '../../components/DBox.astro';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
-<Base title="Pre-empting a broker upgrade outage — Andrew Yang">
+<Base
+  title="Pre-empting a broker upgrade outage — Andrew Yang"
+  description="Tracing a RabbitMQ breaking change to two language bindings of a shared library, fixing and rolling it out fleet-wide before the upgrade ever shipped."
+>
   <p><a href={`${base}/work/`}>← Case studies</a></p>
   <span class="tag">reliability</span>
   <h1>Pre-empting a broker upgrade outage: RabbitMQ 4.3 vs transient queues</h1>

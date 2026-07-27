@@ -1,0 +1,92 @@
+<!doctype html>
+<!--
+  Source for public/og.png — the social preview card. Regenerate after changing
+  the tagline:
+
+    google-chrome --headless --window-size=1200,630 \
+      --screenshot=public/og.png scripts/og-card.html
+
+  Kept as HTML rather than a binary-only asset so the card can be edited in the
+  same vocabulary as the site: the colours below are the dark-theme values from
+  src/styles/global.css.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body {
+        width: 1200px;
+        height: 630px;
+        background: #14161a;
+        color: #e8e6e1;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        padding: 84px 92px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .rule {
+        width: 96px;
+        height: 5px;
+        background: #4fb896;
+        border-radius: 3px;
+      }
+      h1 {
+        font-size: 82px;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+        margin: 36px 0 22px;
+      }
+      p {
+        font-size: 36px;
+        line-height: 1.4;
+        color: #9aa2ad;
+        max-width: 27ch;
+      }
+      p strong {
+        color: #e8e6e1;
+        font-weight: 600;
+      }
+      /* Deliberately no numbers on this card: it is a PNG, so anything that
+         drifts would go stale silently. Stack names do not drift. */
+      .stack {
+        margin-top: 34px;
+        font-family: ui-monospace, "DejaVu Sans Mono", monospace;
+        font-size: 25px;
+        color: #6f7885;
+        letter-spacing: 0.01em;
+      }
+      footer {
+        display: flex;
+        align-items: baseline;
+        gap: 22px;
+        font-size: 24px;
+        color: #9aa2ad;
+      }
+      footer .url {
+        font-family: ui-monospace, "DejaVu Sans Mono", monospace;
+        color: #4fb896;
+      }
+      footer .sep {
+        color: #2b2f36;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div class="rule"></div>
+      <h1>Andrew Yang</h1>
+      <p>Backend engineer who owns <strong>data pipelines end-to-end</strong>.</p>
+      <div class="stack">Kotlin · PHP · RabbitMQ · MySQL · Kubernetes</div>
+    </div>
+    <footer>
+      <span class="url">nplus.page/portfolio</span>
+      <span class="sep">|</span>
+      <span>case studies · knowledge platform · live demos</span>
+    </footer>
+  </body>
+</html>

@@ -1,15 +1,19 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { facts } from '../../data/facts';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
-<Base title="Turning 800 read books into infrastructure — Andrew Yang">
+<Base
+  title={`Turning ${facts.booksRead} read books into infrastructure — Andrew Yang`}
+  description={`Reading notes turned into a queryable engine: full-text and vector search over roughly ${facts.booksRead} books, served to machines through an authenticated API.`}
+>
   <p><a href={`${base}/lab/`}>← Lab</a></p>
   <span class="tag">knowledge systems</span>
-  <h1>Turning 800 read books into infrastructure</h1>
+  <h1>Turning {facts.booksRead} read books into infrastructure</h1>
   <p class="lede">
-    I read a lot, and I keep structured notes — roughly 800 books distilled into
-    a <a href={`${base}/platform/`}>1,400-repository platform</a>. That corpus
+    I read a lot, and I keep structured notes — roughly {facts.booksRead} books distilled into
+    a <a href={`${base}/platform/`}>{facts.repoCount}-repository platform</a>. That corpus
     is the actual moat: not the tooling around it, but the accumulated judgment
     inside it. The engineering question became: how do you make a decade of
     reading <em>queryable</em> — first for a human, then for machines?
@@ -67,7 +71,7 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
   <h2>Why this is the moat</h2>
   <p>
     Any engineer can wire up vector search in an afternoon — the retrieval
-    stack is commodity. What cannot be copied is the corpus: 800 books of
+    stack is commodity. What cannot be copied is the corpus: {facts.booksRead} books of
     structured, personally-distilled notes, accumulated over years, with a
     taxonomy that makes them navigable. The system's quality ceiling is set by
     the knowledge inside it, and that is exactly the asset that compounds.

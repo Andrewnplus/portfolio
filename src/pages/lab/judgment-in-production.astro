@@ -3,7 +3,10 @@ import Base from '../../layouts/Base.astro';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
-<Base title="Judgment calls, written down — Andrew Yang">
+<Base
+  title="Judgment calls, written down — Andrew Yang"
+  description="A pricing engine that prefers blanks over guesses, an alert channel that must not report its own death, and a metric that measured the wrong thing."
+>
   <p><a href={`${base}/lab/`}>← Lab</a></p>
   <span class="tag">design judgment</span>
   <h1>Judgment calls, written down</h1>

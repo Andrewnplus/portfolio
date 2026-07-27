@@ -5,7 +5,10 @@ import DBox from '../../components/DBox.astro';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
-<Base title="From a site-wide outage to the right metric — Andrew Yang">
+<Base
+  title="From a site-wide outage to the right metric — Andrew Yang"
+  description="A site-wide outage cut hot-path requests by 84% — and then a service-time analysis showed the obvious conclusion was wrong and the real risks were deeper."
+>
   <p><a href={`${base}/work/`}>← Case studies</a></p>
   <span class="tag">performance</span>
   <h1>From a site-wide outage to the right metric</h1>

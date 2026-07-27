@@ -1,9 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
+import { facts } from '../data/facts';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
-<Base title="About — Andrew Yang">
+<Base
+  title="About — Andrew Yang"
+  description="Background, technical range and contact details for Andrew Yang — a backend engineer working where data pipelines, message queues and domain modeling meet."
+>
   <h1>About</h1>
   <p class="lede">
     Backend engineer at meteocontrol (solar-monitoring platform), based in Germany.
@@ -15,7 +19,7 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
   <ul class="clean">
     <li>
       <strong>Own the vendor-integration platform</strong> for a solar-monitoring
-      ingest pipeline: 6+ third-party vendor APIs onboarded end-to-end, each spanning
+      ingest pipeline: {facts.vendorApis}+ third-party vendor APIs onboarded end-to-end, each spanning
       six repositories from parser to OpenAPI contract, plus feasibility spikes that
       turned stalled go/no-go decisions into concrete estimates.
     </li>
@@ -47,7 +51,7 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 
   <h2>Outside work</h2>
   <p>
-    I run a <a href={`${base}/platform/`}>1,400-repository knowledge platform</a> — book notes,
+    I run a <a href={`${base}/platform/`}>{facts.repoCount}-repository knowledge platform</a> — book notes,
     handbooks, and topic sites — governed by the same engineering discipline I use
     professionally, and <a href={`${base}/demo/`}>two live systems</a> — a queue-based
     LLM pipeline and an order-to-printer system running in a real shop — that put my

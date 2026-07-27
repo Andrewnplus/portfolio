@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { facts } from '../../data/facts';
 
 // Lab = 個人系統的「設計演進」故事。與 /work/ 的分工：work 講「在公司
 // 解決過什麼」，lab 講「同一個想法如何跨世代演進」——方法與判斷力的
@@ -23,9 +24,9 @@ const cases = [
   {
     tag: 'knowledge systems',
     slug: 'knowledge-as-infrastructure',
-    title: 'Turning 800 read books into infrastructure',
+    title: `Turning ${facts.booksRead} read books into infrastructure`,
     teaser:
-      'Reading notes became a queryable engine: full-text + vector search over ~800 books, served to machines through an authenticated API — so a news pipeline can ask "which of my books resonate with this?"',
+      `Reading notes became a queryable engine: full-text + vector search over ~${facts.booksRead} books, served to machines through an authenticated API — so a news pipeline can ask "which of my books resonate with this?"`,
   },
   {
     tag: 'design judgment',
@@ -38,7 +39,10 @@ const cases = [
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
-<Base title="Lab — Andrew Yang">
+<Base
+  title="Lab — Andrew Yang"
+  description="Four stories of the same engineering ideas evolving across generations of my own systems: async pipelines, single-operator ops, knowledge as infrastructure."
+>
   <h1>The lab: how my designs evolve</h1>
   <p class="lede">
     My personal platform is where I test what I believe about engineering. The

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Accent tile from src/styles/global.css; the light-theme green is used by
+       default and the dark-theme green swaps in on dark browser chrome. -->
+  <style>
+    .tile { fill: #0f6b54; }
+    .mark { fill: #fcfcfa; }
+    @media (prefers-color-scheme: dark) {
+      .tile { fill: #4fb896; }
+      .mark { fill: #14161a; }
+    }
+  </style>
+  <rect class="tile" width="64" height="64" rx="14" />
+  <path
+    class="mark"
+    d="M32 13 L47 51 H39.5 L36.3 42.5 H27.7 L24.5 51 H17 Z M32 25.5 L29.4 36 H34.6 Z"
+  />
+</svg>

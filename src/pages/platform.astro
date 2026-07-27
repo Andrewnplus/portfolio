@@ -1,12 +1,16 @@
 ---
 import Base from '../layouts/Base.astro';
+import { facts } from '../data/facts';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
-<Base title="Knowledge platform — Andrew Yang">
-  <h1>A 1,400-repository platform with one operator</h1>
+<Base
+  title="Knowledge platform — Andrew Yang"
+  description="How a personal repository fleet is governed by one operator: convention plugins, automated dependency policy, and an idempotent provisioning pipeline."
+>
+  <h1>A {facts.repoCount}-repository platform with one operator</h1>
   <p class="lede">
-    My reading notes, handbooks, and topic sites live in 1,400+ repositories under
+    My reading notes, handbooks, and topic sites live in {facts.repoCount}+ repositories under
     one GitHub organization. At that scale, "personal websites" becomes a fleet
     management problem — which is exactly why it's here.
   </p>
@@ -26,7 +30,7 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
     </li>
     <li>
       <strong>Metadata discipline:</strong> a three-tier topic taxonomy with a
-      whitelist keeps 1,400+ repositories queryable; idempotent provisioning makes
+      whitelist keeps {facts.repoCount}+ repositories queryable; idempotent provisioning makes
       re-runs safe.
     </li>
     <li>

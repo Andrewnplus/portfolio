@@ -1,0 +1,34 @@
+---
+import Base from '../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base
+  title="Not found — Andrew Yang"
+  description="That page does not exist on Andrew Yang's engineering portfolio."
+>
+  <h1>That page isn't here.</h1>
+  <p class="lede">
+    Either it moved, or the link was never right. The four things worth reading
+    are all one click away.
+  </p>
+
+  <div class="cards">
+    <a class="card" href={`${base}/work/`}>
+      <h3>Case studies</h3>
+      <p>Six production stories from a solar-monitoring ingest pipeline.</p>
+    </a>
+    <a class="card" href={`${base}/platform/`}>
+      <h3>Knowledge platform</h3>
+      <p>A repository fleet with one operator, governed by machine.</p>
+    </a>
+    <a class="card" href={`${base}/lab/`}>
+      <h3>The lab</h3>
+      <p>The same ideas evolving across generations of my own systems.</p>
+    </a>
+    <a class="card" href={`${base}/demo/`}>
+      <h3>Live demos</h3>
+      <p>Two systems running right now, diagrams and trade-offs included.</p>
+    </a>
+  </div>
+</Base>
