@@ -1,0 +1,150 @@
+---
+import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base
+  title="sashimi-printer — live demo — Andrew Yang"
+  description="An LLM turns free-form chat messages into printed kitchen tickets in a real shop — designed around what happens when the model is wrong."
+>
+  <p><a href={`${base}/demo/`}>← Demos</a></p>
+  <span class="tag">production · one real shop</span>
+  <h1>sashimi-printer: an LLM in the middle of a working kitchen</h1>
+  <p class="lede">
+    Customers order in a group chat, in whatever words they like. A ticket comes
+    out of a thermal printer in the shop. Between those two facts sits a language
+    model — and every interesting decision in this system is about what happens
+    on the day it gets an order wrong.
+  </p>
+
+  <Diagram
+    viewBox="0 0 900 230"
+    alt="A free-form order message reaches a dedicated store phone, which forwards it to a backend where a model turns prose into a structured order. The order joins a pending-print queue; the printer app polls the queue, prints one ticket at a time over Bluetooth, and acknowledges each job idempotently after it prints."
+    caption='One device does the forwarding and the printing; the queue is what makes "printed" a fact rather than an assumption.'
+  >
+    <DBox x={10} y={24} title="Order message" sub="free-form text in a group chat" />
+    <DBox x={335} y={24} title="Store phone" sub="forwards the notification onward" />
+    <DBox x={660} y={24} accent title="Backend" sub="a model turns prose into an order" />
+
+    <DBox x={660} y={134} title="Pending-print queue" sub="one job per order, until printed" />
+    <DBox x={335} y={134} title="Printer app" sub="polls; prints one, acks one" />
+    <DBox x={10} y={134} title="Thermal printer" sub="Bluetooth; text printed as an image" />
+
+    <path class="flow" d="M240,54 L329,54" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M565,54 L654,54" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M720,84 L720,128" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M660,164 L571,164" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M335,164 L246,164" marker-end="url(#d-arrow)" />
+    <path class="flow dash" d="M480,194 L480,212 L830,212 L830,200" marker-end="url(#d-arrow)" />
+    <text class="lbl" x="655" y="207" text-anchor="middle">
+      ack after the paper comes out — idempotent
+    </text>
+  </Diagram>
+
+  <h2>What each reader tends to ask</h2>
+  <div class="lenses">
+    <div class="lens">
+      <span class="tag">business</span>
+      <h3>Nobody has to watch a phone</h3>
+      <ul>
+        <li>
+          <strong>Orders stop being transcription work.</strong> What used to be
+          someone reading a chat and writing a ticket by hand now arrives at the
+          kitchen already printed.
+        </li>
+        <li>
+          <strong>One device instead of a machine per job.</strong> The phone that
+          receives the orders is the phone that prints them, so a small shop is
+          not running a spare computer it cannot maintain.
+        </li>
+        <li>
+          <strong>A bad day costs one ticket, not the service.</strong> The worst
+          realistic failure is a single ticket printed in its raw form for a human
+          to read — not a stalled kitchen.
+        </li>
+        <li>
+          <strong>Runs on the hardware already there.</strong> Any standard
+          receipt printer works, because the system does not depend on what fonts
+          the printer happens to ship with.
+        </li>
+      </ul>
+    </div>
+
+    <div class="lens">
+      <span class="tag">engineering</span>
+      <h3>Never lose one, never print it twice</h3>
+      <ul>
+        <li>
+          <strong>The queue is the source of truth.</strong> A job leaves it only
+          after paper physically comes out; a failed print simply stays, and the
+          next poll picks it up again.
+        </li>
+        <li>
+          <strong>Acknowledgement is idempotent.</strong> If the print succeeds
+          but the acknowledgement does not, the device remembers locally and
+          re-acknowledges instead of reprinting — the classic at-least-once
+          problem, solved where it actually bites.
+        </li>
+        <li>
+          <strong>One bad job cannot block the line.</strong> A ticket that fails
+          to render degrades to the raw message; if even that fails it is skipped
+          and the rest keep printing.
+        </li>
+        <li>
+          <strong>Staying alive is a feature.</strong> A foreground service and an
+          explicit battery exemption, because on a phone the real outage is the
+          operating system quietly deciding you are idle.
+        </li>
+      </ul>
+    </div>
+
+    <div class="lens">
+      <span class="tag">AI</span>
+      <h3>Designed around the model being wrong</h3>
+      <ul>
+        <li>
+          <strong>The model is a parser, not an authority.</strong> Its only job
+          is turning prose into a structured order. Everything downstream assumes
+          it can be wrong.
+        </li>
+        <li>
+          <strong>Degrade, never block.</strong> When extraction is not trusted,
+          the ticket prints the customer's original words. A human in the kitchen
+          is a better fallback than a missing order.
+        </li>
+        <li>
+          <strong>Suspect the input before the model.</strong> When orders went
+          missing, reconciliation showed the messages were being truncated
+          upstream — so the fix started with measuring the feed in shadow mode,
+          not with rewriting prompts.
+        </li>
+        <li>
+          <strong>Measure against reality, not a benchmark.</strong> The only
+          score that counts here is tickets against what customers actually
+          ordered that day.
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p><strong>What I would rather show you in person</strong></p>
+    <ul class="clean">
+      <li>A live print — message in the chat, paper out of the machine, in about the time it takes to read this line.</li>
+      <li>The truncation investigation: how the shadow-mode probe was built and what it proved.</li>
+      <li>The ticket layout renderer, and why rendering text as an image was the right call for this hardware.</li>
+      <li>Where I would put a human confirmation step if the order value were ten times higher.</li>
+    </ul>
+  </div>
+
+  <h2>See it</h2>
+  <p>
+    <span class="muted"
+      >Source is private — it prints a real shop's orders, and the repository
+      carries their menu and operational details. I am happy to screen-share the
+      code, the reconciliation data, and a live print in an interview.</span
+    >
+  </p>
+</Base>

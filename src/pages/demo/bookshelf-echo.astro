@@ -1,0 +1,173 @@
+---
+import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base
+  title="bookshelf-echo — live demo — Andrew Yang"
+  description="A queue-based LLM pipeline with idempotent consumers, a retry ladder, a relevance gate before any model spend, and a daily budget ceiling."
+>
+  <p><a href={`${base}/demo/`}>← Demos</a></p>
+  <span class="tag">queues · LLM pipeline</span>
+  <h1>bookshelf-echo: a pipeline that decides what is worth spending on</h1>
+  <p class="lede">
+    Five sources in, one daily digest out, no human in the loop. The content is
+    the by-product; the system is the point — delivery guarantees you can audit,
+    and a cost ceiling that parks work in the queue rather than overspending.
+  </p>
+
+  <Diagram
+    viewBox="0 0 920 320"
+    alt="Sources feed a broker; items are enriched and de-duplicated, then pass a relevance gate before any model call; surviving items are digested under a daily budget, curated and quote-checked, and published as a static site. Failed messages fall through a retry ladder into a dead letter queue with replay tooling."
+    caption="The whole system in one picture. Everything that is expensive happens to the right of a gate that costs nothing."
+  >
+    <DBox x={10} y={24} title="Sources" sub="five feeds, each on its own cadence" />
+    <DBox x={335} y={24} title="Broker" sub="at-least-once, idempotent consumers" />
+    <DBox x={660} y={24} title="Enrich + de-duplicate" sub="fetch the full text, store it once" />
+
+    <DBox
+      x={660}
+      y={134}
+      accent
+      title="Relevance gate"
+      sub="matched against my book library"
+      sub2="— before any model spend"
+    />
+    <DBox
+      x={335}
+      y={134}
+      title="Digest"
+      sub="one model call per surviving item,"
+      sub2="under a daily budget"
+    />
+    <DBox
+      x={10}
+      y={134}
+      title="Curate + verify"
+      sub="daily re-rank; quotes checked"
+      sub2="verbatim, without a model"
+    />
+
+    <DBox x={10} y={244} title="Publish" sub="static site, rebuilt by CI" />
+    <DBox
+      x={660}
+      y={244}
+      dashed
+      title="Retry ladder → dead letter"
+      sub="with replay tooling and a runbook"
+    />
+
+    <path class="flow" d="M240,54 L329,54" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M565,54 L654,54" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M775,84 L775,128" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M660,164 L571,164" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M335,164 L246,164" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M125,194 L125,238" marker-end="url(#d-arrow)" />
+    {/* the failure route deliberately goes around the outside: it must not
+        cross a happy-path arrow, or the picture stops being readable */}
+    <path class="flow dash" d="M450,24 L450,8 L906,8 L906,274 L896,274" marker-end="url(#d-arrow)" />
+    <text class="lbl" x="462" y="21">failures</text>
+  </Diagram>
+
+  <h2>What each reader tends to ask</h2>
+  <div class="lenses">
+    <div class="lens">
+      <span class="tag">business</span>
+      <h3>Cost is bounded by design</h3>
+      <ul>
+        <li>
+          <strong>A ceiling, not a hope.</strong> Spend is capped per day. When
+          the cap is reached the work waits in the queue for the next window —
+          nothing is dropped, and the bill cannot surprise anyone.
+        </li>
+        <li>
+          <strong>Spend follows value.</strong> Material that has no connection
+          to what the system is for is discarded before it costs anything.
+        </li>
+        <li>
+          <strong>Output that stays cheap.</strong> The public face is a static
+          site, so readers cost nothing to serve and there is no service to page
+          anyone about at 3am.
+        </li>
+        <li>
+          <strong>Silence is an allowed outcome.</strong> On a thin day it
+          publishes less rather than padding — the quality bar is enforced by
+          the system, not by whoever is watching.
+        </li>
+      </ul>
+    </div>
+
+    <div class="lens">
+      <span class="tag">engineering</span>
+      <h3>Failure has a defined destination</h3>
+      <ul>
+        <li>
+          <strong>At-least-once, made safe.</strong> Consumers acknowledge after
+          the commit, and every side effect is keyed so that redelivery is a
+          no-op. Duplicates are expected, not feared.
+        </li>
+        <li>
+          <strong>A retry ladder, then a dead letter.</strong> Transient errors
+          back off through timed stages; what still fails lands somewhere
+          visible, with tooling to replay it once the cause is fixed.
+        </li>
+        <li>
+          <strong>Judgment that does not belong in a queue is not in one.</strong> The
+          daily "which of these matter relative to each other" step needs the
+          whole day as its unit of work, so it is a batch job by design.
+        </li>
+        <li>
+          <strong>Outbound-only posture.</strong> The host opens no inbound
+          ports; the attack surface is a static site and a git push.
+        </li>
+      </ul>
+    </div>
+
+    <div class="lens">
+      <span class="tag">AI</span>
+      <h3>The model is the smallest part</h3>
+      <ul>
+        <li>
+          <strong>Retrieval as a spending gate.</strong> Relevance is decided by
+          vector search against my own corpus <em>before</em> a token is spent —
+          the cheap check runs first, the expensive one only on survivors.
+        </li>
+        <li>
+          <strong>Tiered models.</strong> A cheap model reads everything; a
+          stronger one is invoked once a day, on the shortlist, where the extra
+          quality actually changes the outcome.
+        </li>
+        <li>
+          <strong>Verification without a second opinion.</strong> Every quote in
+          the output is checked character-for-character against the source. A
+          string comparison cannot hallucinate; a judge model can.
+        </li>
+        <li>
+          <strong>Declining is a first-class result.</strong> When the material
+          is only a keyword coincidence, the correct output is nothing at all —
+          and the pipeline is built to allow that.
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p><strong>What I would rather show you in person</strong></p>
+    <ul class="clean">
+      <li>The dead-letter queue with real messages in it, and the replay run that empties it.</li>
+      <li>Why a broker at all — and the line past which I would have used a cron job instead.</li>
+      <li>The gate's threshold: how it was chosen, what it wrongly rejects, and how I would know.</li>
+      <li>The architecture decision records, including the two I have since argued myself out of.</li>
+    </ul>
+  </div>
+
+  <h2>See it</h2>
+  <p>
+    <a href="https://nplus.wiki/bookshelf-echo-site/">Today's digest</a> —
+    published unattended, one per day.<br />
+    <a href="https://github.com/nplus-father/bookshelf-echo">Source and decision records on GitHub</a>
+     — the diagram above is the README's diagram, kept in sync.
+  </p>
+</Base>

@@ -1,0 +1,58 @@
+---
+import Base from '../../layouts/Base.astro';
+
+// Demos = 我自己在跑的、活著的系統。與 /work/ 和 /lab/ 的分工：work 是公司
+// 案例、lab 是設計演進，demo 是「現在正在跑、可以當場看」的東西。
+// 寫法原則（刻意的）：每頁一張流程圖 + 三個讀者視角（商業 / 工程 / AI），
+// 只寫不會過時的結構與判斷，實作細節留到面談當場展開。
+const demos = [
+  {
+    tag: 'queues · LLM pipeline',
+    slug: 'bookshelf-echo',
+    title: 'bookshelf-echo — a pipeline that decides what is worth spending on',
+    teaser:
+      'Collects AI news from five sources, filters it against my own book library before any model call, and publishes a daily digest. Reliability semantics you can audit; a cost ceiling that parks work in the queue instead of overspending.',
+  },
+  {
+    tag: 'production · one real shop',
+    slug: 'sashimi-printer',
+    title: 'sashimi-printer — an LLM in the middle of a working kitchen',
+    teaser:
+      'Free-form chat messages become printed kitchen tickets. Runs in a real shop, where the interesting question is not the model — it is what happens on the day the model is wrong.',
+  },
+];
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base title="Demos — Andrew Yang">
+  <h1>Two systems that are running right now</h1>
+  <p class="lede">
+    Case studies are claims about the past; these are systems you can check
+    today. Both are small enough for one operator and real enough to break —
+    which is the point. Each page is a diagram, the decisions I would defend,
+    and what each kind of reader tends to care about.
+  </p>
+
+  <div class="case-list">
+    {
+      demos.map((d) => (
+        <a class="card" href={`${base}/demo/${d.slug}/`}>
+          <span class="tag">{d.tag}</span>
+          <h3>{d.title}</h3>
+          <p>{d.teaser}</p>
+        </a>
+      ))
+    }
+  </div>
+
+  <div class="callout">
+    <p>
+      <strong>Why these pages stay shallow on purpose.</strong> Configuration
+      values, queue names, prompts and schemas change every month; the shape of
+      the system and the reasons behind it do not. So the pages here carry the
+      diagram and the trade-offs, and the implementation is something I would
+      rather open in front of you — screen-shared, with the failure cases —
+      than freeze into a page that quietly goes stale.
+    </p>
+  </div>
+</Base>

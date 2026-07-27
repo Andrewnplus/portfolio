@@ -4,9 +4,9 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
 <Base title="Knowledge platform — Andrew Yang">
-  <h1>A 1,477-repository platform with one operator</h1>
+  <h1>A 1,400-repository platform with one operator</h1>
   <p class="lede">
-    My reading notes, handbooks, and topic sites live in 1,477 repositories under
+    My reading notes, handbooks, and topic sites live in 1,400+ repositories under
     one GitHub organization. At that scale, "personal websites" becomes a fleet
     management problem — which is exactly why it's here.
   </p>
@@ -39,7 +39,8 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
   <h2>v1 → v2 → v3 of the same idea</h2>
   <p>
     The provisioning CLI is a file-based queue with a two-phase AI workflow — an
-    async content pipeline, version one. <a href={`${base}/demo/`}>ai-radar</a> is version
+    async content pipeline, version one.
+    <a href={`${base}/demo/bookshelf-echo/`}>bookshelf-echo</a> is version
     two of the same problem with production-grade semantics: a real broker,
     delivery guarantees, retry topology, and observability. Version three adds
     the thing versions one and two were missing — editorial judgment backed by

@@ -29,10 +29,10 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 
   <h2>Generation 2 — a real broker, learned properly</h2>
   <p>
-    <a href={`${base}/demo/`}>ai-radar</a> rebuilt the idea on RabbitMQ with the
-    semantics gen 1 lacked: idempotent consumers, a TTL+DLX retry ladder, DLQ
-    replay tooling, and an LLM cost circuit breaker. This is where I learned
-    what a delivery guarantee actually costs to provide.
+    A rebuild on RabbitMQ — ai-radar, the system later renamed bookshelf-echo —
+    gave the idea the semantics gen 1 lacked: idempotent consumers, a TTL+DLX
+    retry ladder, DLQ replay tooling, and an LLM cost circuit breaker. This is
+    where I learned what a delivery guarantee actually costs to provide.
   </p>
   <p>
     Its wall was different: <strong>a pipeline that only moves data is not yet a
@@ -42,7 +42,8 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 
   <h2>Generation 3 — a pipeline with an opinion</h2>
   <p>
-    bookshelf-echo, the production successor: five services (producers →
+    <a href={`${base}/demo/bookshelf-echo/`}>bookshelf-echo</a>, the production
+    successor: five services (producers →
     enricher → matcher → digester → publisher) around the same broker patterns,
     plus the two things gen 2 was missing.
   </p>

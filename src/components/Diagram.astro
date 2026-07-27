@@ -1,0 +1,40 @@
+---
+// One diagram per page. Hand-authored SVG on purpose: the site ships zero
+// client-side JavaScript, so a rendering library would cost more than the
+// diagrams are worth. Colours come from the theme variables in global.css.
+//
+// The arrow marker is always `#d-arrow` — one diagram per page means no
+// collisions, and every page can write marker-end="url(#d-arrow)".
+interface Props {
+  /** SVG viewBox; the shared grid is 920 units wide. */
+  viewBox: string;
+  /** Text alternative — describe the flow, not the shapes. */
+  alt: string;
+  /** Sentence under the figure. Say what the picture is evidence of. */
+  caption: string;
+}
+const { viewBox, alt, caption } = Astro.props;
+---
+
+<figure class="diagram-figure">
+  <div class="diagram">
+    <svg viewBox={viewBox} role="img" aria-labelledby="d-title">
+      <title id="d-title">{alt}</title>
+      <defs>
+        <marker
+          id="d-arrow"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="6"
+          markerHeight="6"
+          orient="auto-start-reverse"
+        >
+          <path class="ah" d="M0,0 L10,5 L0,10 z" />
+        </marker>
+      </defs>
+      <slot />
+    </svg>
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>
