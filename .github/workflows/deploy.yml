@@ -11,7 +11,22 @@ permissions:
   id-token: write
 
 jobs:
+  # An explicit gate rather than relying on withastro/action running our build
+  # script: the diagrams are prop-driven, and a typo'd prop renders an empty
+  # label instead of failing. `astro check` is the only thing that catches it.
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+
   build:
+    needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
