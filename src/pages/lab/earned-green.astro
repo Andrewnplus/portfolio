@@ -1,0 +1,77 @@
+---
+import Base from '../../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base title="A status light is a claim — Andrew Yang">
+  <p><a href={`${base}/lab/`}>← Lab</a></p>
+  <span class="tag">observability</span>
+  <h1>A status light is a claim — make every green earned</h1>
+  <p class="lede">
+    The most dangerous state in operations is not red; it is a green that
+    nobody has to earn. After
+    <a href={`${base}/lab/one-machine-one-operator/`}>hunting silent
+    failures</a> for a while, a pattern emerged: most of them were hiding
+    behind an indicator that was telling the truth about the wrong thing.
+  </p>
+
+  <h2>Four lying lights, four fixes</h2>
+  <ul class="clean">
+    <li>
+      <strong>"Synced" that promised nothing:</strong> deployments pinned to a
+      <code>:latest</code> image tag made the GitOps dashboard show Synced
+      while saying nothing about <em>which code</em> was running. Fixed by
+      pinning immutable per-commit tags, bumped by the pipeline — now Synced
+      means "this exact build," and rollback is a git revert.
+    </li>
+    <li>
+      <strong>A cron that was green because it was dead:</strong> the firewall
+      verification job exported "last run succeeded" — and kept exporting it
+      for eleven days after the job stopped running. The metric now splits
+      <em>last-ran</em> from <em>last-succeeded</em>, and staleness itself
+      alerts. A timestamp that never gets old is the signature of a corpse.
+    </li>
+    <li>
+      <strong>A red that meant nothing:</strong> one unconfigured component was
+      the only permanently-failing target on the board. Removing it was an
+      observability fix, not a cleanup — a board with one tolerated red trains
+      you to tolerate the second one.
+    </li>
+    <li>
+      <strong>The pipeline nobody watched:</strong> the deployment system
+      itself — the thing every other guarantee routes through — was the least
+      instrumented component on the machine. It now has its own alerts, and the
+      chain of "who watches the watcher" terminates off-machine in an external
+      dead-man switch.
+    </li>
+  </ul>
+
+  <h2>The principle</h2>
+  <p>
+    Every status indicator makes a claim, and the engineering question is
+    always: <em>what would this look like if the claim were false?</em> If the
+    answer is "exactly the same," the indicator is decoration. The fixes above
+    are all the same move — restructuring the signal so that the failure case
+    is visibly different from the healthy case: immutable tags, split
+    timestamps, zero tolerated reds, watchers that are themselves watched.
+  </p>
+
+  <h2>Verification as a habit, not an event</h2>
+  <p>
+    The same standard applies to one-off claims. A cutover is "done" when a
+    test matrix passes against the new path — not when the config is applied.
+    A cold boot "works" when the machine has actually been rebooted and a
+    scripted checklist has passed — twice, because the second drill is what
+    proves the first one wasn't luck. An alert route "delivers" when a
+    synthetic alert has arrived on a phone. Green you haven't earned is just
+    red you haven't met yet.
+  </p>
+
+  <h2>What I'd tell my past self</h2>
+  <p>
+    Audit your dashboards by asking each light for its alibi: "when did you
+    last prove you could turn red?" Anything that can't answer is not
+    monitoring — it's reassurance. The eleven-day green cron taught me more
+    about observability than any incident that actually paged.
+  </p>
+</Base>

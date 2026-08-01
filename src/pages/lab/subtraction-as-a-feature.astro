@@ -1,0 +1,102 @@
+---
+import Base from '../../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base title="Subtraction is a shipping feature — Andrew Yang">
+  <p><a href={`${base}/lab/`}>← Lab</a></p>
+  <span class="tag">operations</span>
+  <h1>Subtraction is a shipping feature</h1>
+  <p class="lede">
+    In one recent stretch my platform retired an entire backend application, a
+    container-management UI, an identity component, a monitoring stack, an edge
+    proxy, and four CI runners. Nothing broke. Portfolios usually show what got
+    built; this page is about the discipline of removing things — which turns
+    out to have its own engineering.
+  </p>
+
+  <h2>Removal has criteria, not moods</h2>
+  <ul class="clean">
+    <li>
+      <strong>An application:</strong> retired after the stated criterion was
+      met — zero real traffic for seven days, measured, not assumed. Its data
+      stays untouched in the shared database; deletion of data and deletion of
+      compute are separate decisions on separate clocks.
+    </li>
+    <li>
+      <strong>A management UI:</strong> retired when its benefit fell below its
+      cost — with the cost stated honestly: the tool's admin token was
+      root-equivalent for the whole machine, an attack surface purchased for
+      the convenience of viewing twelve containers.
+    </li>
+    <li>
+      <strong>An identity component:</strong> removed because it was the only
+      permanently-red monitoring target. A red light that never means anything
+      trains the operator to ignore red lights.
+    </li>
+  </ul>
+
+  <h2>The mechanics of a clean retirement</h2>
+  <ul class="clean">
+    <li>
+      <strong>Un-watch before un-plug:</strong> remove the monitoring that
+      points at a service before killing the service, or the retirement itself
+      pages you. Then remove the probes from the cold-boot checklist — a drill
+      that fails on ghosts stops being trusted.
+    </li>
+    <li>
+      <strong>Data outlives compute on a dated clock:</strong> volumes and
+      tables survive their services with an explicit removal date written down,
+      so "keep it just in case" cannot quietly become forever.
+    </li>
+    <li>
+      <strong>Paths get forwarding addresses:</strong> retired URLs return
+      path-preserving redirects; API clients and old bookmarks keep working
+      while the system underneath is replaced.
+    </li>
+    <li>
+      <strong>Hunt the zombies:</strong> the sneakiest leftovers are deploy
+      pipelines — I found two CI workflows still trying to deploy services that
+      had moved runtimes weeks earlier. A service's pipeline, monitoring,
+      checklist entries and docs form its estate, and the estate must be
+      settled.
+    </li>
+  </ul>
+
+  <h2>The other direction: un-deciding</h2>
+  <p>
+    My TODO file has a section called "deliberately not doing — with reasons."
+    The test of that section is not that it exists; it is that entries
+    <em>leave</em> it when their reasons die. Recent examples, each recorded
+    with what changed:
+  </p>
+  <ul class="clean">
+    <li>
+      "Backend secrets stay in CI secrets" was reversed when I noticed the
+      stated reason — <em>the truth already lives elsewhere</em> — had become
+      the problem: the main application's credentials were the only secrets
+      outside the encrypted-in-git system, taking a detour through a CI
+      runner and a plaintext file on every deploy.
+    </li>
+    <li>
+      A database ownership table I wrote confidently was corrected days later
+      when evidence contradicted it. The table's value survived the error —
+      because a wrong entry in a maintained registry gets fixed, while wrong
+      folklore just spreads.
+    </li>
+    <li>
+      A database migration shipped with its <em>reversal</em> documented as a
+      first-class artifact — observation window, rollback path, and the date
+      the rollback path itself expires.
+    </li>
+  </ul>
+
+  <h2>What I'd tell my past self</h2>
+  <p>
+    Measure your system by what it no longer contains. Every retired component
+    is maintenance you stopped paying, attack surface you stopped defending,
+    and — most valuable — one less thing whose failure modes you have to hold
+    in your head. Addition is easy to celebrate; subtraction is where the
+    judgment shows.
+  </p>
+</Base>
