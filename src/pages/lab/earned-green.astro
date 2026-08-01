@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
@@ -17,6 +19,20 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
     failures</a> for a while, a pattern emerged: most of them were hiding
     behind an indicator that was telling the truth about the wrong thing.
   </p>
+
+  <Diagram
+    viewBox="0 0 920 172"
+    alt="An indicator showing green flows into the audit question: what would this look like if the claim were false? Two exits. If the answer is 'exactly the same' — the dashed path — the light is decoration, and the signal must be restructured: split timestamps, immutable tags, zero tolerated reds. If failure would look different, it is monitoring, and the green is earned."
+    caption="The audit that caught four lying lights, as a flowchart. The dashed exit is where the eleven-day-green dead cron lived."
+  >
+    <DBox x={10} y={56} w={230} h={60} title="an indicator shows green" sub="every light is a claim" />
+    <DBox x={335} y={56} w={250} h={60} accent title="ask for its alibi" sub={'"what would false look like?"'} />
+    <DBox x={660} y={10} w={250} h={60} dashed title={'"exactly the same"'} sub="decoration — restructure the" sub2="signal until false looks different" />
+    <DBox x={660} y={102} w={250} h={60} title={'"visibly different"'} sub="monitoring — this green" sub2="is earned" />
+    <path class="flow" d="M240,86 L329,86" marker-end="url(#d-arrow)" />
+    <path class="flow dash" d="M585,76 L620,76 L620,40 L654,40" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M585,96 L620,96 L620,132 L654,132" marker-end="url(#d-arrow)" />
+  </Diagram>
 
   <h2>Four lying lights, four fixes</h2>
   <ul class="clean">

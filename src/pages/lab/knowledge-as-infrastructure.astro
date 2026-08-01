@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
 import { facts } from '../../data/facts';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
@@ -18,6 +20,22 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
     inside it. The engineering question became: how do you make a decade of
     reading <em>queryable</em> — first for a human, then for machines?
   </p>
+
+  <Diagram
+    viewBox="0 0 920 140"
+    alt="Three generations left to right: markdown book notes for human re-reading, then one SQLite index with full-text and vector search, then an authenticated API whose main consumer is a news pipeline asking which books resonate with each item. The first arrow is labelled with memory not scaling past a few hundred books; the second with the question changing from search to serving machines."
+    caption="The notes stay the single source of truth at every generation — the index is derived and rebuildable, the API is read-only. Only the consumer changed: me, then search, then machines."
+  >
+    <DBox x={10} y={36} w={230} h={64} title="Gen 1 — notes for humans" sub="one repo per book, chapters" sub2="as markdown, taxonomy" />
+    <DBox x={335} y={36} w={230} h={64} title="Gen 2 — one index" sub="SQLite: chapter trees, trigram" sub2="full-text, vector embeddings" />
+    <DBox x={660} y={36} w={230} h={64} accent title="Gen 3 — API for machines" sub="authenticated bridge; the news" sub2="pipeline asks what resonates" />
+    <path class="flow" d="M240,68 L329,68" marker-end="url(#d-arrow)" />
+    <text class="lbl" x="284" y="26" text-anchor="middle">memory stops</text>
+    <text class="lbl" x="284" y="120" text-anchor="middle">scaling</text>
+    <path class="flow" d="M565,68 L654,68" marker-end="url(#d-arrow)" />
+    <text class="lbl" x="609" y="26" text-anchor="middle">the consumer</text>
+    <text class="lbl" x="609" y="120" text-anchor="middle">stops being me</text>
+  </Diagram>
 
   <h2>Generation 1 — notes for humans</h2>
   <p>

@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
 import { facts } from '../../data/facts';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
@@ -16,6 +18,22 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
     somewhere durable. I have now built that pipeline three times. Each
     generation exists because the previous one hit a wall worth naming.
   </p>
+
+  <Diagram
+    viewBox="0 0 920 140"
+    alt="Three generations left to right: a file-based queue, then a RabbitMQ pipeline with delivery guarantees, then a five-service pipeline with an editorial gate. Each arrow is labelled with the wall that forced the next generation: files have no failure semantics; a reliable pipeline still has no judgment."
+    caption="The arrows are the story: each generation was forced by a named failure of the last, and each kept the invariant — async, idempotent, inspectable."
+  >
+    <DBox x={10} y={36} w={230} h={64} title="Gen 1 — files as a queue" sub="YAML queue, two-phase AI workflow" sub2="idempotent, operator-supervised" />
+    <DBox x={335} y={36} w={230} h={64} title="Gen 2 — a real broker" sub="retry ladder, DLQ replay," sub2="cost circuit breaker" />
+    <DBox x={660} y={36} w={230} h={64} accent title="Gen 3 — with an opinion" sub="five services + editorial gate" sub2="backed by the reading corpus" />
+    <path class="flow" d="M240,68 L329,68" marker-end="url(#d-arrow)" />
+    <text class="lbl" x="284" y="26" text-anchor="middle">no failure</text>
+    <text class="lbl" x="284" y="120" text-anchor="middle">semantics</text>
+    <path class="flow" d="M565,68 L654,68" marker-end="url(#d-arrow)" />
+    <text class="lbl" x="609" y="26" text-anchor="middle">reliable, but</text>
+    <text class="lbl" x="609" y="120" text-anchor="middle">no judgment</text>
+  </Diagram>
 
   <h2>Generation 1 — a queue made of files</h2>
   <p>

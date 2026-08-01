@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
@@ -16,6 +18,22 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
     operator, no team, no on-call rotation. The design constraint that shaped
     everything: <strong>any failure that stays silent will stay forever.</strong>
   </p>
+
+  <Diagram
+    viewBox="0 0 920 140"
+    alt="Three generations left to right: hand-run docker compose, then GitOps-lite with contracts, drift detection and rollback, then a dual-runtime platform converged onto single systems for monitoring, edge and secrets. The first arrow is labelled with the silent divergence between prod and git that forced generation two; the second with the duplication that migration created and convergence removed."
+    caption="Same triptych shape as every evolution here: the wall of one generation names the next. The silent prod/git split created the guards; the guards made a two-runtime migration survivable."
+  >
+    <DBox x={10} y={36} w={230} h={64} title="Gen 1 — hands on the host" sub="compose, SSH, pull —" sub2="prod and git can disagree" />
+    <DBox x={335} y={36} w={230} h={64} title="Gen 2 — GitOps-lite" sub="env contract, preflight, verify," sub2="rollback, drift as a metric" />
+    <DBox x={660} y={36} w={230} h={64} accent title="Gen 3 — dual runtime" sub="k3s + Argo, converged seams:" sub2="one monitor, one edge, one key" />
+    <path class="flow" d="M240,68 L329,68" marker-end="url(#d-arrow)" />
+    <text class="lbl" x="284" y="26" text-anchor="middle">silent</text>
+    <text class="lbl" x="284" y="120" text-anchor="middle">divergence</text>
+    <path class="flow" d="M565,68 L654,68" marker-end="url(#d-arrow)" />
+    <text class="lbl" x="609" y="26" text-anchor="middle">duplication,</text>
+    <text class="lbl" x="609" y="120" text-anchor="middle">then convergence</text>
+  </Diagram>
 
   <h2>Generation 1 — a directory that is production</h2>
   <p>

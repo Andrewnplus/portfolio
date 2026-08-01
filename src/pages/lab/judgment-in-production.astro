@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
@@ -16,6 +18,22 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
     people, and AI output meets reality. Three design calls from that world,
     each one a rule I now carry.
   </p>
+
+  <Diagram
+    viewBox="0 0 920 172"
+    alt="A customer's free-form message goes to an LLM, which proposes order lines. The proposal enters a deterministic pricing engine with an explicit source priority: customer-stated price, then daily menu, then lexicon. Two exits: a priced total when a source resolves, or — on the dashed path — a blank left for a human when nothing does. There is no path on which the model's guess becomes a price."
+    caption="The flagship rule in one picture: the AI proposes, the engine is the guardrail, and the dashed exit — a blank — is a feature, not a failure."
+  >
+    <DBox x={10} y={56} w={190} h={60} title="customer message" sub="free-form chat" />
+    <DBox x={240} y={56} w={190} h={60} title="LLM proposes" sub="order lines — helpful," sub2="sometimes wrong" />
+    <DBox x={470} y={56} w={200} h={60} accent title="deterministic engine" sub="stated price → daily menu" sub2="→ lexicon, in that order" />
+    <DBox x={710} y={10} w={200} h={60} title="a priced total" sub="a source resolved it" />
+    <DBox x={710} y={102} w={200} h={60} dashed title="a blank, for a human" sub="no source did —" sub2="never the model's guess" />
+    <path class="flow" d="M200,86 L234,86" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M430,86 L464,86" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M670,76 L690,76 L690,40 L704,40" marker-end="url(#d-arrow)" />
+    <path class="flow dash" d="M670,96 L690,96 L690,132 L704,132" marker-end="url(#d-arrow)" />
+  </Diagram>
 
   <h2>1. Prefer a blank over a guess</h2>
   <p>

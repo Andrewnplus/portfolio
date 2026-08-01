@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
@@ -17,6 +19,23 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
     built; this page is about the discipline of removing things — which turns
     out to have its own engineering.
   </p>
+
+  <Diagram
+    viewBox="0 0 920 194"
+    alt="A dashed box across the top represents a service leaving production after its retirement criterion is met. Four arrows descend to the four parts of its estate, each settled separately: the watchers, where monitoring and drill probes are removed first so the retirement doesn't page anyone; the pipeline, where its CI deploy dies with it instead of lingering as a zombie; the data, which outlives the compute with a written removal date; and the URLs, which keep working through path-preserving redirects."
+    caption="A service is more than its process. Retirement means settling the whole estate — and the order matters: un-watch before un-plug."
+  >
+    <DBox x={10} y={10} w={900} h={44} dashed title="a service leaves production — criterion met, not mood" />
+    <DBox x={10} y={120} w={200} h={64} title="the watchers" sub="monitors and drill probes" sub2="removed first — no false page" />
+    <DBox x={240} y={120} w={200} h={64} title="the pipeline" sub="its CI deploy dies with it," sub2="not as a lingering zombie" />
+    <DBox x={470} y={120} w={200} h={64} title="the data" sub="outlives compute, with a" sub2="written removal date" />
+    <DBox x={700} y={120} w={200} h={64} title="the URLs" sub="path-preserving redirects —" sub2="old clients keep working" />
+    <path class="flow" d="M110,54 L110,114" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M340,54 L340,114" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M570,54 L570,114" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M800,54 L800,114" marker-end="url(#d-arrow)" />
+    <text class="lbl" x="460" y="90" text-anchor="middle">the estate, settled in order</text>
+  </Diagram>
 
   <h2>Removal has criteria, not moods</h2>
   <ul class="clean">
