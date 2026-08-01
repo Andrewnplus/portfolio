@@ -3,7 +3,10 @@ import Base from '../../layouts/Base.astro';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
-<Base title="A status light is a claim — Andrew Yang">
+<Base
+  title="A status light is a claim — Andrew Yang"
+  description="Four lying status lights — a Synced badge that promised nothing, a cron green for eleven days after it died — and the principle that every green must be earned."
+>
   <p><a href={`${base}/lab/`}>← Lab</a></p>
   <span class="tag">observability</span>
   <h1>A status light is a claim — make every green earned</h1>
