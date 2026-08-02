@@ -1,0 +1,181 @@
+---
+import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+
+// 這頁的用途跟其他 lab 頁不同：其他頁講「我的設計如何演進」，這頁講
+// 「我的設計對應到誰的設計」。骨架是一張對照表 + 誠實的差距清單。
+// 每一列都必須是我真的跑過的東西，不是讀過的東西——一旦哪一列變成
+// 「我打算做」，就從表裡拿掉，否則整張表的可信度一起掉。
+const mapping = [
+  {
+    mine: 'k3s, one node, hand-tuned requests',
+    theirs: 'Borg',
+    cloud: 'GKE',
+    edge:
+      'Borg reclaims resources by predicting actual usage instead of trusting declared requests. At my scale I tune by hand; at fleet scale that is the first thing I would need.',
+  },
+  {
+    mine: 'Argo CD, git as the only source of truth',
+    theirs: 'Prodspec + Annealing',
+    cloud: 'Config Sync / Fleet',
+    edge:
+      'Same reconciliation loop, different blast radius. My drift detector is a cron comparing prod against git; theirs is the deployment system itself.',
+  },
+  {
+    mine: 'CloudNativePG Postgres, single primary',
+    theirs: 'Spanner / F1',
+    cloud: 'Cloud SQL / AlloyDB / Spanner',
+    edge:
+      'I get transactions on one machine. TrueTime buys external consistency across continents by making clock uncertainty explicit and waiting it out.',
+  },
+  {
+    mine: 'Prometheus + Grafana + Loki + Alloy',
+    theirs: 'Borgmon → Monarch',
+    cloud: 'Managed Prometheus',
+    edge:
+      'Monarch is the same pull-and-scrape lineage, made regional and in-memory so that the monitoring survives the thing it monitors.',
+  },
+  {
+    mine: 'RabbitMQ, TTL+DLX retry ladder, DLQ replay',
+    theirs: 'internal pub/sub',
+    cloud: 'Pub/Sub',
+    edge:
+      'Identical delivery semantics — at-least-once with idempotent consumers. I hand-built the retry ladder that a managed broker gives you as a policy field.',
+  },
+  {
+    mine: 'Alertmanager → ntfy → headless AI triage',
+    theirs: 'on-call automation',
+    cloud: 'Cloud Monitoring + Gemini',
+    edge:
+      'Outbound-only by construction: no inbound port, no VPN. The constraint came from my home network; it happens to be the zero-trust posture.',
+  },
+  {
+    mine: 'LLM cost circuit breaker with queued backlog',
+    theirs: '—',
+    cloud: 'Vertex AI + budget controls',
+    edge:
+      'The part with no textbook. When the budget trips, work is not dropped — it stays in the queue and drains when the window resets.',
+  },
+  {
+    mine: 'Nightly backups + monthly restore drill',
+    theirs: 'DiRT',
+    cloud: '—',
+    edge:
+      'Google institutionalised disaster drills; I arrived at the same rule alone. A backup you have not restored is a hypothesis.',
+  },
+];
+---
+
+<Base
+  title="One machine, read as a small Google — Andrew Yang"
+  description="A row-by-row mapping between a single-box k3s platform and the Google systems it rhymes with — Borg, Monarch, Spanner, Chubby — plus an honest list of what one machine cannot teach."
+>
+  <p><a href={`${base}/lab/`}>← Lab</a></p>
+  <span class="tag">distributed systems</span>
+  <h1>One machine, read as a small Google</h1>
+  <p class="lede">
+    Nothing on my box is novel. Every component is a scaled-down answer to a
+    problem someone at Google wrote a paper about a decade earlier. That is the
+    useful part: having built the small version by hand, I can say precisely
+    where my design stops working — and the published design is the description
+    of what happens next.
+  </p>
+
+  <Diagram
+    viewBox="0 0 920 172"
+    alt="A single machine on the left feeds into a middle box labelled 'the same problem at two scales'. Two exits: the upper path leads to the published Google design, the lower dashed path leads to the breaking point — the scale at which the small answer stops working."
+    caption="How the mapping is meant to be used: not as trivia about what Google runs, but as a way to name the breaking point of my own design."
+  >
+    <DBox x={10} y={56} w={230} h={60} title="what I actually run" sub="one node, one operator" />
+    <DBox x={335} y={56} w={250} h={60} accent title="the same problem" sub="stated independently of scale" />
+    <DBox x={660} y={10} w={250} h={60} title="the published design" sub="Borg, Monarch, Spanner…" />
+    <DBox x={660} y={102} w={250} h={60} dashed title="my breaking point" sub="the scale at which the small" sub2="answer stops working" />
+    <path class="flow" d="M240,86 L329,86" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M585,76 L620,76 L620,40 L654,40" marker-end="url(#d-arrow)" />
+    <path class="flow dash" d="M585,96 L620,96 L620,132 L654,132" marker-end="url(#d-arrow)" />
+  </Diagram>
+
+  <h2>The mapping</h2>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>What I run</th>
+          <th>Google's</th>
+          <th>On GCP</th>
+          <th>Where mine stops</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          mapping.map((m) => (
+            <tr>
+              <td>{m.mine}</td>
+              <td>{m.theirs}</td>
+              <td>{m.cloud}</td>
+              <td>{m.edge}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Two rows worth dwelling on</h2>
+  <ul class="clean">
+    <li>
+      <strong>The cost circuit breaker is the row with no paper.</strong> Every
+      other line has a decade-old published answer; budget governance for a
+      production LLM pipeline does not. Mine gates spend per item behind an
+      embedding-based relevance filter, and when the budget trips the backlog
+      lives in the queue rather than on the floor — so a spend ceiling degrades
+      throughput instead of losing work.
+    </li>
+    <li>
+      <strong>The monitoring row is where I learned the most by being wrong.</strong>
+      A firewall verification job kept exporting "last run succeeded" for eleven
+      days after it stopped running, and the board stayed green the whole time.
+      That failure — <a href={`${base}/lab/earned-green/`}>documented here</a> —
+      is the same freshness problem Monarch's design takes as a first-class
+      concern, arrived at the hard way.
+    </li>
+  </ul>
+
+  <h2>What one machine cannot teach me</h2>
+  <p>
+    The mapping is only credible if I am equally precise about its limits. Four
+    things my platform structurally cannot exercise:
+  </p>
+  <ul class="clean">
+    <li>
+      <strong>Fleet-scale failure.</strong> With one node I never meet
+      correlated failure, stragglers, or the tail latency that dominates once a
+      request fans out across a thousand machines.
+    </li>
+    <li>
+      <strong>Multi-tenancy.</strong> I have no tenant boundary at all, so I
+      have never had to reason about isolation, noisy neighbours, or per-tenant
+      quota.
+    </li>
+    <li>
+      <strong>Global consistency.</strong> One primary means every consistency
+      question I have faced had a trivial answer.
+    </li>
+    <li>
+      <strong>Managed-service economics.</strong> Everything here is
+      self-operated, which teaches the mechanism but not the trade-off a team
+      actually makes when it buys the managed version instead.
+    </li>
+  </ul>
+
+  <h2>Why the mapping is the point</h2>
+  <p>
+    An engineer who has only read the papers can describe Borg. An engineer who
+    has only run a homelab can describe their homelab. The combination is worth
+    more than either: it lets me answer "how would this behave at scale?" with a
+    specific breaking point and a specific published design that addresses it,
+    rather than with a guess in one direction or a citation in the other.
+  </p>
+</Base>

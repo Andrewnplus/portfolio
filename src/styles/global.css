@@ -349,3 +349,43 @@ code {
   border-radius: 4px;
   padding: 0.08em 0.35em;
 }
+
+/* Tables are the exception, not the house style: use one only when the content
+   is genuinely a mapping between columns. On narrow screens the table scrolls
+   inside its own box rather than reflowing, for the same reason the diagrams
+   do — a squeezed cell hides the comparison that is the whole point. */
+.table-scroll {
+  overflow-x: auto;
+  margin: 1.4rem 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+}
+
+.table-scroll table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 46rem;
+  font-size: 0.9rem;
+}
+
+.table-scroll th,
+.table-scroll td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.table-scroll th {
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  border-bottom-width: 2px;
+}
+
+.table-scroll tr:last-child td {
+  border-bottom: none;
+}
