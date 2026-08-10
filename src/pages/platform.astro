@@ -21,6 +21,10 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
       <strong>Fleet governance:</strong> a Gradle convention plugin published to a
       package registry pins toolchain and formatting for every repository; a shared
       Renovate preset rolls dependency updates across the fleet monthly with automerge.
+      The plugin's version is declared once per repository as a range rather than a
+      pinned string, so publishing the plugin <em>is</em> the rollout — the reasoning,
+      and the 36 GB of duplicated build artifacts that forced it, are in
+      <a href={`${base}/lab/convention-by-reference/`}>a convention copied 1,600 times</a>.
     </li>
     <li>
       <strong>Provisioning pipeline:</strong> a Kotlin CLI takes a queue of books and
@@ -36,7 +40,9 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
     <li>
       <strong>Operational scar tissue:</strong> batch pushes hitting Pages deploy
       throttling, formatting hooks across ~1,300 working copies, wrapper upgrades
-      across generations of JDKs — fleet problems, fleet solutions.
+      across generations of JDKs, a fleet-wide sweep that never converged because
+      new repositories were being provisioned while it ran — fleet problems, fleet
+      solutions.
     </li>
   </ul>
 

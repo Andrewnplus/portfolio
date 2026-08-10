@@ -7,7 +7,7 @@
 // or `{facts.repoCount}-repository platform` and get the grammar it needs.
 export const facts = {
   /** Repositories in the personal knowledge platform. */
-  repoCount: '1,400',
+  repoCount: '1,700',
   /** Books read and kept as structured notes. Always stated as "roughly". */
   booksRead: '800',
   /** Support tickets resolved at work, cumulative. */

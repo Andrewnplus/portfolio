@@ -1,0 +1,135 @@
+---
+import Base from '../../layouts/Base.astro';
+import { facts } from '../../data/facts';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base
+  title="A convention copied 1,600 times — Andrew Yang"
+  description="A Gradle convention plugin centralised how every book repository builds. What it did not centralise showed up years later as 36 GB of duplicated build artifacts and a fleet split across four plugin versions."
+>
+  <p><a href={`${base}/lab/`}>← Lab</a></p>
+  <span class="tag">fleet management</span>
+  <h1>A convention copied 1,600 times</h1>
+  <p class="lede">
+    A <a href={`${base}/platform/`}>convention plugin</a> centralised how every
+    repository in the fleet builds. Two things it did not centralise stayed
+    invisible until the fleet was large enough to measure them: 36 GB of
+    duplicated build artifacts, and a fleet quietly split across four versions of
+    the plugin that was supposed to be keeping it uniform. Both had the same
+    root cause, and the same fix — stop distributing by value.
+  </p>
+
+  <h2>The problem that does not change</h2>
+  <p>
+    One operator, {facts.repoCount}+ repositories, and every one of them has to
+    build the same way: same Hugo version, same formatting rule, same task graph.
+    The question is never <em>what</em> the convention is. It is where the
+    convention <em>lives</em>, and what it costs to change it.
+  </p>
+
+  <h2>Generation 1 — the convention lives in every repository</h2>
+  <p>
+    Each repository carried its own build file with the versions written out.
+    Fine at ten repositories. At a hundred, changing one formatting rule meant a
+    hundred edits, and the fleet was only as uniform as the last sweep.
+  </p>
+
+  <h2>Generation 2 — the convention becomes a plugin</h2>
+  <p>
+    A Gradle convention plugin, published to a package registry, applied by every
+    repository. The build logic moved to one place; each repository declared
+    which version of it to apply, and an automated dependency bot opened the
+    upgrade pull requests. This is the arrangement described on the
+    <a href={`${base}/platform/`}>platform page</a>, and it held for a long time.
+  </p>
+
+  <h2>What forced generation 3</h2>
+  <p>
+    Two failures, both of which only become measurable at fleet scale.
+  </p>
+  <p>
+    <strong>The tool caches were never centralised.</strong> The plugin
+    centralised the build <em>logic</em>, but the tools that logic drives — the
+    Hugo binary, the formatter's npm dependencies — still downloaded into each
+    repository's own build directory. A census across the fleet found 35.8 GB of
+    build output, of which 24.6 GB was one formatter's <code>node_modules</code>,
+    spread across 1,667 directories that held <strong>three</strong> distinct
+    dependency sets between them. One of those three had been copied 1,538
+    times. Alongside it, a 52 MB Hugo binary, downloaded and extracted once per
+    repository. Against all of that, the actual writing — every chapter, every
+    image, in every book — came to 3.5 GB.
+  </p>
+  <p>
+    <strong>The version was distributed by value.</strong> A pinned version is a
+    string copied into every build file, and the dependency bot is the process
+    that keeps 1,600 copies of that string equal. It did not. A census found the
+    fleet split 888 / 391 / 287 / 1 across four versions, with 287 repositories
+    still on a release from two minor versions back. Pinning was supposed to buy
+    reproducibility. What it actually bought was drift with a changelog — worse
+    than a floating version, because it looked deliberate.
+  </p>
+
+  <h2>Generation 3 — one cache, one declaration</h2>
+  <ul class="clean">
+    <li>
+      <strong>Tool caches move out of the repository.</strong> Both downloads now
+      resolve to a machine-level cache keyed by the pinned version. The formatter
+      hardlinks each repository's copy into that cache rather than reinstalling,
+      which drops the marginal cost of a repository from 16 MB to 560 KB; the
+      Hugo download is skipped outright once the shared binary exists, so no
+      repository past the first even fetches the tarball.
+    </li>
+    <li>
+      <strong>The version is declared once, by reference.</strong> Build files no
+      longer name a version at all; the fleet's plugin version is declared in one
+      block per repository as a range, so publishing the plugin <em>is</em> the
+      rollout. The migration that moved 1,600 repositories to that form is
+      designed to be the last bulk edit of its kind.
+    </li>
+  </ul>
+
+  <h2>What I would tell my past self</h2>
+  <p>
+    Separate three layers and keep them separate. <strong>Machine-level:</strong>
+    tool binaries and package caches, which depend on pinned versions and not on
+    content. <strong>Fleet-level:</strong> the convention itself — one
+    definition, referenced. <strong>Repository-level:</strong> the content, which
+    is the only thing that is genuinely per-repository. Storage waste comes from
+    binding the first layer to the third. Rollout pain comes from distributing
+    the second by value instead of by reference. Both bills arrive late, in
+    proportion to how well the thing worked.
+  </p>
+
+  <div class="callout">
+    <p><strong>Operational scar tissue from the migration</strong></p>
+    <ul class="clean">
+      <li>
+        <strong>Verify before you clear.</strong> The migration re-declares the
+        formatting step, which is only safe if every plugin version still in the
+        fleet defines that step identically. Decompiling the oldest release in
+        use to confirm took ten minutes, and was the difference between a safe
+        migration and silently dropping a formatting rule from 287 repositories.
+      </li>
+      <li>
+        <strong>The sweep must be idempotent, because the fleet moves while you
+        sweep it.</strong> Three passes turned up three different sets of
+        stragglers. Not flaky tooling — new repositories were being provisioned
+        during the migration. The script skips anything already migrated, which
+        makes re-running it the entire recovery procedure.
+      </li>
+      <li>
+        <strong>Deploy-on-push is a throttle you own.</strong> Every repository
+        publishes to Pages on push to its default branch, so a 1,600-repository
+        migration commit either carries a skip-CI marker or becomes 1,600
+        deploys.
+      </li>
+      <li>
+        <strong>The template is the fleet's germline.</strong> New repositories
+        are instantiated from a template repository, so until the template is
+        migrated too, every newly provisioned repository is born with the old
+        form — and the sweep never converges.
+      </li>
+    </ul>
+  </div>
+</Base>
