@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
 import { facts } from '../../data/facts';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
@@ -19,6 +21,22 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
     the plugin that was supposed to be keeping it uniform. Both had the same
     root cause, and the same fix — stop distributing by value.
   </p>
+
+  <Diagram
+    viewBox="0 0 920 140"
+    alt="Three generations left to right: the convention copied into every build file, then the convention published once as a plugin that each repository pins by version, then the convention referenced as a range with tool caches keyed by version instead of by repository. The first arrow is labelled with a rule change costing a hundred edits; the second with 36 GB of duplicated caches and a fleet split across four live plugin versions."
+    caption="Each generation moved one more thing out of the repository. What stayed behind is what broke next — generation 2 centralised the build logic and left both the tool caches and the version string copied 1,600 times."
+  >
+    <DBox x={10} y={36} w={230} h={64} title="Gen 1 — copied per repo" sub="every build file spells out the" sub2="versions; uniform only after a sweep" />
+    <DBox x={335} y={36} w={230} h={64} title="Gen 2 — a shared plugin" sub="build logic in one place — but the" sub2="version is still a pinned string" />
+    <DBox x={660} y={36} w={230} h={64} accent title="Gen 3 — by reference" sub="caches keyed by version, not repo;" sub2="the version declared as a range" />
+    <path class="flow" d="M240,68 L329,68" marker-end="url(#d-arrow)" />
+    <text class="lbl" x="284" y="26" text-anchor="middle">one rule change</text>
+    <text class="lbl" x="284" y="120" text-anchor="middle">= a hundred edits</text>
+    <path class="flow" d="M565,68 L654,68" marker-end="url(#d-arrow)" />
+    <text class="lbl" x="609" y="26" text-anchor="middle">36 GB duplicated,</text>
+    <text class="lbl" x="609" y="120" text-anchor="middle">four live versions</text>
+  </Diagram>
 
   <h2>The problem that does not change</h2>
   <p>
