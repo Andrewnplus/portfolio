@@ -1,0 +1,165 @@
+---
+import Base from '../layouts/Base.astro';
+import Diagram from '../components/Diagram.astro';
+import DBox from '../components/DBox.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+
+// 這頁刻意是「有日期的」：/lab/ 講方法、/platform/ 講規模，這裡講一次
+// 完整的搬遷是怎麼排序的。Day 1 = 2026-07-20，Day 12 = 2026-07-31，每一列
+// 都對得上 nplus-infra / nplus-gitops 的 commit，所以不要改成約略說法。
+const days = [
+  {
+    date: 'Day 1',
+    what: 'A contract, a preview and an automatic rollback',
+    why: 'Before moving anything: the deploy learned to print what it would change, to check every configuration value before applying it, and to return to the last good version on a failed verification. Then the rollback was tested by deliberately breaking production twice.',
+  },
+  {
+    date: 'Day 1',
+    what: 'Kubernetes arrives, and three services move in',
+    why: 'Cluster, GitOps controller, app-of-apps, and a disposable demo workload deleted from the declaration to prove that removal propagates. Then three services entered the cluster while the old copies kept running — traffic moved by editing one upstream.',
+  },
+  {
+    date: 'Day 1',
+    what: 'Monitoring and databases start their own dual runs',
+    why: 'The metrics stack entered as an observer of the old one rather than a replacement, and the first database moved to an operator-managed cluster. Two more parallel worlds to keep in sync — which is the price of never having a moment where only the new thing exists.',
+  },
+  {
+    date: 'Day 2',
+    what: 'Secrets, certificates and the firewall become declarations',
+    why: 'Encrypted secrets in version control, a wildcard certificate issued over DNS, the firewall stated as a file with a script that verifies the running machine against it. Rebuilding this box stopped being an act of memory.',
+  },
+  {
+    date: 'Day 2',
+    what: 'A rollback ate somebody’s work',
+    why: 'An automatic rollback reset a working tree that had uncommitted writing in it. The fix was a rule — never roll back a dirty tree — and a note recording what was lost. The incident is in the repository because a mechanism that has never hurt you has not been tested.',
+  },
+  {
+    date: 'Day 3',
+    what: 'Everything gets pinned, encrypted and serialised',
+    why: 'Images pinned by digest, every backup encrypted, and concurrent deploys serialised — the last one after a race had been misdiagnosed as a network flake for most of a day.',
+  },
+  {
+    date: 'Day 5',
+    what: 'The restore drill runs on the new engine',
+    why: 'A backup that has not been restored is a belief. The drill was re-pointed at the new database version and run until it passed.',
+  },
+  {
+    date: 'Day 7',
+    what: 'The cutovers, and the retirements that make them real',
+    why: 'The edge, the certificates and the monitoring authority all moved to the cluster — and the old proxy, the old certificate renewer, the old metrics stack and the old dashboards were deleted the same day. A cold-boot drill passed, and the watchdog got a heartbeat that lives off the machine.',
+  },
+  {
+    date: 'Day 11',
+    what: 'A service is retired for lack of traffic',
+    why: 'Seven days of no real requests was the criterion, decided in advance; the data was left untouched. Log aggregation landed the same week, so the cluster stopped being the only part of the system with no memory.',
+  },
+  {
+    date: 'Day 12',
+    what: 'The database engine changes underneath the application',
+    why: 'The last application moved off the legacy engine onto the operator-managed cluster, with the schema generated from the code rather than hand-written, and three engine differences recorded as they were hit.',
+  },
+  {
+    date: 'Day 12',
+    what: 'The pipeline instruments itself',
+    why: 'Immutable image tags, because a mutable tag made the "Synced" badge a lie; the last application secrets moved out of CI; and the deployment system finally got alerts of its own. It had been the least monitored component on the machine.',
+  },
+];
+---
+
+<Base
+  title="Twelve days in July — Andrew Yang"
+  description="A dated log of one migration: a hand-run machine became a declared one in twelve days, with every cutover dual-run first and every replaced component deleted the same day."
+>
+  <span class="tag">migration · dated</span>
+  <h1>Twelve days in July</h1>
+  <p class="lede">
+    The <a href={`${base}/lab/`}>lab</a> pages argue for a method. This page is
+    the receipt: the twelve days in which a machine I ran by hand became one
+    that is described by files, told in the order it actually happened. Nothing
+    here is a plan — every line landed, and every line has a commit behind it.
+  </p>
+
+  <Diagram
+    viewBox="0 0 920 190"
+    alt="Three states left to right. A hand-run machine, where the truth is what is running. Then a dual-run period where the old and new systems are both alive and traffic is moved between them. Then a declared machine, where the truth is a file and the running system is a consequence. Below the middle state, a dashed box shows the retirements that end each dual run: the replaced component is deleted, not left running."
+    caption="The middle box is the whole discipline. Every step spent time in it, and none of them was finished until the box below had been emptied."
+  >
+    <DBox x={10} y={30} h={64} title="Hand-run" sub="the truth is whatever" sub2="is currently running" />
+    <DBox x={335} y={30} h={64} accent title="Dual-run" sub="both alive, traffic moved" sub2="one upstream at a time" />
+    <DBox x={660} y={30} h={64} title="Declared" sub="the truth is a file; the running" sub2="system is a consequence" />
+    <DBox x={320} y={120} w={260} h={60} dashed title="Retire the old one" sub="the same day, or it never happened" />
+    <path class="flow" d="M240,62 L329,62" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M565,62 L654,62" marker-end="url(#d-arrow)" />
+    <path class="flow dash" d="M450,94 L450,114" marker-end="url(#d-arrow)" />
+  </Diagram>
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th>What landed</th>
+          <th>Why it is on this list</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          days.map((d) => (
+            <tr>
+              <td>{d.date}</td>
+              <td>{d.what}</td>
+              <td>{d.why}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h2>The four rules it was run by</h2>
+  <ul class="clean">
+    <li>
+      <strong>Nothing is cut over before it has been dual-run.</strong> The new
+      thing enters as an observer or a second copy, traffic moves in one
+      reversible edit, and only then does the old one go. It costs a period of
+      keeping two worlds in sync; it buys never having a moment where the only
+      copy is the untested one.
+    </li>
+    <li>
+      <strong>The retirement is part of the change, not the follow-up.</strong>
+      A cutover that leaves the old component running has not reduced anything —
+      it has added a second thing to maintain and a second story about what is
+      true.
+    </li>
+    <li>
+      <strong>Rollback comes from the last known-good deploy, not from
+      history.</strong> Reasoning backwards through commits assumes the last
+      commit is what is running, which is exactly the assumption a rollback
+      invalidates. The pipeline records what it deployed and returns to that.
+    </li>
+    <li>
+      <strong>A drill counts when it has been run — twice.</strong> Cold boot,
+      restore, rollback: each one was executed against the real machine, and the
+      second run is what proves the first was not luck.
+    </li>
+  </ul>
+
+  <h2>What I would do differently</h2>
+  <p>
+    Four phases in one day was too fast — not because anything broke that could
+    not be recovered, but because the rollback path got its first real exercise
+    by accident rather than by design, and because a mechanism written that
+    morning deleted work that afternoon. The order was right; the spacing was
+    not. The parts I would repeat unchanged are the boring ones: verify the
+    configuration before applying it, delete the thing you replaced, and write
+    down the incident even when the only witness is you.
+  </p>
+
+  <p>
+    The method behind this is spread across
+    <a href={`${base}/lab/one-machine-one-operator/`}>one machine, one
+    operator</a>, <a href={`${base}/lab/subtraction-as-a-feature/`}>subtraction
+    as a feature</a>, and
+    <a href={`${base}/lab/earned-green/`}>earned green</a>.
+  </p>
+</Base>

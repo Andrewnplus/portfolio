@@ -1,0 +1,158 @@
+---
+import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base
+  title="voice studio — live demo — Andrew Yang"
+  description="A paid, long-running job split across two runtimes: a producer in Kubernetes, a worker on the host, a queue that carries only an id, and a contract that cannot drift silently."
+>
+  <p><a href={`${base}/demo/`}>← Demos</a></p>
+  <span class="tag">queues · two runtimes</span>
+  <h1>voice studio: a job that costs money, crossing a runtime boundary</h1>
+  <p class="lede">
+    Paste a video URL and a script; get back an mp3 of that voice reading it.
+    The product is four minutes of waiting, which makes this an exercise in the
+    unglamorous half of distributed systems: where the state lives, what the
+    queue is allowed to carry, and how two services written in two languages
+    stay in agreement.
+  </p>
+
+  <Diagram
+    viewBox="0 0 920 314"
+    alt="A static page posts a job to a producer running in Kubernetes, which writes a database row before publishing a message containing only the job id. A worker running in host Docker consumes it, downloads the audio, cuts a sample, clones the voice and synthesises the script, writing status and the finished file straight back to the shared PostgreSQL. The browser polls the backend, which reads the same rows. A failed job retries once and then stops in a dead-letter queue."
+    caption="Two runtimes, one shared database. The queue carries an identifier and nothing else — every other arrow in the picture is state, not messaging."
+  >
+    <DBox x={10} y={24} title="Static page" sub="login, a URL and a script" />
+    <DBox x={335} y={24} title="Producer (Kubernetes)" sub="row first, then publish" sub2="— a ghost job is the worse failure" />
+    <DBox x={660} y={24} title="Job queue" sub="one field: the job id" />
+
+    <DBox x={660} y={134} title="Worker (host Docker)" sub="download → sample → clone" sub2="→ speak → delete the model" />
+    <DBox x={335} y={134} accent title="PostgreSQL" sub="both runtimes share only this:" sub2="status per stage, and the file" />
+    <DBox x={10} y={134} title="Browser polls the API" sub="one stage name at a time" />
+
+    <DBox x={10} y={244} title="Download the result" sub="when, and only when, done" />
+    <DBox x={660} y={244} dashed title="One retry, then stop" sub="dead letter — the job is already" sub2="marked failed where you can see it" />
+
+    <path class="flow" d="M240,54 L329,54" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M565,54 L654,54" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M775,84 L775,128" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M660,164 L571,164" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M335,164 L246,164" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M125,194 L125,238" marker-end="url(#d-arrow)" />
+    <path class="flow dash" d="M775,194 L775,238" marker-end="url(#d-arrow)" />
+  </Diagram>
+
+  <h2>What each reader tends to ask</h2>
+  <div class="lenses">
+    <div class="lens">
+      <span class="tag">business</span>
+      <h3>Every request spends someone's money</h3>
+      <ul>
+        <li>
+          <strong>Nothing runs for an anonymous visitor.</strong> The whole
+          feature sits behind a login, because the cheapest abuse of a paid
+          pipeline is the one that costs the attacker nothing.
+        </li>
+        <li>
+          <strong>Limits at both ends.</strong> The script length and the URL
+          shape are checked before the job is accepted; the video length and the
+          output size are checked again by the worker, before the expensive
+          steps. A limit only enforced at the front door is a suggestion.
+        </li>
+        <li>
+          <strong>Failure is bounded, not retried into a bill.</strong> A deleted
+          video fails identically every time — so it retries once, then stops
+          somewhere visible instead of burning quota in a loop.
+        </li>
+        <li>
+          <strong>Nothing is left behind at the vendor.</strong> The voice model
+          is deleted as soon as the audio is rendered; the account does not
+          accumulate orphans nobody is auditing.
+        </li>
+      </ul>
+    </div>
+
+    <div class="lens">
+      <span class="tag">engineering</span>
+      <h3>The contract is the interesting part</h3>
+      <ul>
+        <li>
+          <strong>The queue is not a data channel.</strong> The message carries
+          an id; the worker reads the payload from the database. Messages get
+          replayed, and a replayed message that carries a stale copy of the
+          truth is a bug you find months later.
+        </li>
+        <li>
+          <strong>Write the row, then publish.</strong> If the publish fails the
+          row is marked failed. A job that exists in the queue but not in the
+          database is invisible; a job that exists in the database and failed is
+          a support ticket you can actually answer.
+        </li>
+        <li>
+          <strong>A contract that breaks loudly.</strong> Both sides — Kotlin and
+          Python — declare the same queue topology, and the broker refuses a
+          redeclaration whose arguments disagree. Two copies of a contract will
+          drift; the design decision is to make the drift fail on the first
+          connection rather than on the first failure.
+        </li>
+        <li>
+          <strong>Progress without a second queue.</strong> Each stage updates a
+          status column and the browser polls. For one user watching one job, a
+          reply queue would be more machinery and less observability.
+        </li>
+      </ul>
+    </div>
+
+    <div class="lens">
+      <span class="tag">AI</span>
+      <h3>The model is a paid dependency, so it is held at arm's length</h3>
+      <ul>
+        <li>
+          <strong>The provider is an interface.</strong> Cloning and synthesis
+          sit behind one small port with a stub implementation, so the entire
+          pipeline — queue, retries, database, download — is testable end to end
+          without spending anything or being online.
+        </li>
+        <li>
+          <strong>The expensive step is opt-in.</strong> Vocal separation is a
+          switch that is off by default: I would rather turn on a cost when a
+          sample needs it than pay it on every job by habit.
+        </li>
+        <li>
+          <strong>Deterministic failures do not deserve retries.</strong> This
+          pipeline's errors are mostly not stochastic — an unavailable video, a
+          script over quota. Retrying those is not resilience, it is repetition.
+        </li>
+        <li>
+          <strong>Consent is a design constraint, not a footnote.</strong> Every
+          vendor's terms require the voice owner's permission, which is why this
+          is a tool for cloning my own voice and the login is not decoration.
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p><strong>What I would rather show you in person</strong></p>
+    <ul class="clean">
+      <li>The three-row contract table between the two repositories — and what happens on the connection after you change one side of it.</li>
+      <li>The credential bug that shipped green: the integration test connected with the broker's default account, so a producer that ignored its configured password passed every test.</li>
+      <li>A password that lost a byte in transit between two encrypted stores, and why the fix was to make every path agree on the trailing whitespace rather than to re-type it.</li>
+      <li>Why the audio lives in the database today, and the size at which that becomes the wrong answer.</li>
+    </ul>
+  </div>
+
+  <h2>See it</h2>
+  <p>
+    This is the one demo you cannot open yourself: every job spends real money
+    at a vendor, so there is no anonymous entry point — an honest constraint is
+    better than a public form I would have to police. What is open:<br />
+    <a href="https://github.com/nplus-father/voice-worker">the worker</a>
+     — pipeline, retry semantics and the contract notes.<br />
+    <a href="https://github.com/nplus-father/voice-studio-site">the entry page</a>
+     — a static page with no build step, on purpose.
+  </p>
+</Base>

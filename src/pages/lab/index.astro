@@ -1,75 +1,16 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { facts } from '../../data/facts';
+import { labCases } from '../../data/labCases';
+import { inWords } from '../../data/numberWords';
 
-// Lab = 個人系統的「設計演進」故事。與 /work/ 的分工：work 講「在公司
-// 解決過什麼」，lab 講「同一個想法如何跨世代演進」——方法與判斷力的
-// 展示區，不是技術清單。每篇的骨架：不變的問題 → 每一代長什麼樣 →
-// 是什麼逼出下一代 → 方法上學到什麼。
-const cases = [
-  {
-    tag: 'async pipelines',
-    slug: 'async-pipeline-three-generations',
-    title: 'Three generations of the same pipeline',
-    teaser:
-      'A file-based queue, then a real broker with retry topology, then a five-service production pipeline with an editorial gate. Same problem, three answers — each one forced by a failure of the last.',
-  },
-  {
-    tag: 'operations',
-    slug: 'one-machine-one-operator',
-    title: 'One machine, one operator, no silent failures',
-    teaser:
-      'How a single prod box evolved from hand-run compose to a dual-runtime platform where every config has one source of truth, every failure mode has a voice, and even the monitoring has an external dead-man switch.',
-  },
-  {
-    tag: 'knowledge systems',
-    slug: 'knowledge-as-infrastructure',
-    title: `Turning ${facts.booksRead} read books into infrastructure`,
-    teaser:
-      `Reading notes became a queryable engine: full-text + vector search over ~${facts.booksRead} books, served to machines through an authenticated API — so a news pipeline can ask "which of my books resonate with this?"`,
-  },
-  {
-    tag: 'fleet management',
-    slug: 'convention-by-reference',
-    title: 'A convention copied 1,600 times',
-    teaser:
-      'A convention plugin centralised how every repository builds. What it did not centralise surfaced years later as 36 GB of duplicated build artifacts and a fleet split across four plugin versions — one root cause, one fix.',
-  },
-  {
-    tag: 'design judgment',
-    slug: 'judgment-in-production',
-    title: 'Judgment calls, written down',
-    teaser:
-      'A pricing engine that prefers blanks over guesses, an alert channel that must not report its own death, and a metric that measured the wrong thing — small systems where the design decision is the product.',
-  },
-  {
-    tag: 'operations',
-    slug: 'subtraction-as-a-feature',
-    title: 'Subtraction is a shipping feature',
-    teaser:
-      'One stretch of weeks retired an application, two UIs, a monitoring stack, an edge proxy and four CI runners — nothing broke. Removal with criteria, dated data clocks, estate settlement, and decisions that get un-decided.',
-  },
-  {
-    tag: 'distributed systems',
-    slug: 'one-machine-at-google-scale',
-    title: 'One machine, read as a small Google',
-    teaser:
-      'Every component on my box is a scaled-down answer to a problem someone published a paper about — Borg, Monarch, Spanner, DiRT. A row-by-row mapping, plus the four things one machine structurally cannot teach.',
-  },
-  {
-    tag: 'observability',
-    slug: 'earned-green',
-    title: 'A status light is a claim — make every green earned',
-    teaser:
-      'A Synced badge that promised nothing, a cron that stayed green for eleven days after it died, a red that everyone tolerated. Four lying lights, four fixes, one principle: ask every indicator for its alibi.',
-  },
-];
+// 清單與數量的唯一真相在 src/data/labCases.ts —— 這頁只負責排版。
+const count = inWords(labCases.length, true);
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
 <Base
   title="Lab — Andrew Yang"
-  description="Eight stories of the same engineering ideas evolving across generations of my own systems: async pipelines, single-operator ops, knowledge as infrastructure, fleet-scale build conventions, subtraction, and earned green."
+  description={`${count} stories of the same engineering ideas evolving across generations of my own systems — from async pipelines and fleet-scale build conventions to subtraction, earned green, and alerts that investigate themselves.`}
 >
   <h1>The lab: how my designs evolve</h1>
   <p class="lede">
@@ -83,7 +24,7 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 
   <div class="case-list">
     {
-      cases.map((c) => (
+      labCases.map((c) => (
         <a class="card" href={`${base}/lab/${c.slug}/`}>
           <span class="tag">{c.tag}</span>
           <h3>{c.title}</h3>

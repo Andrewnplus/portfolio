@@ -4,7 +4,10 @@ Engineering portfolio site — evidence-first: every claim links to something yo
 can read or run.
 
 - Astro static site, zero client-side JavaScript, light/dark via `prefers-color-scheme`
-- Content plan and confidentiality rules: `workspace/career/03-portfolio-site-plan.md` (local)
+- Confidentiality rule, since the plan document that used to hold it is gone: work
+  case studies describe the shape of a system and the judgment calls, never an
+  employer's configuration, customer names or internal figures. Personal-system
+  pages may name components; anything that goes stale monthly stays off the page
 - Deploys to GitHub Pages via `withastro/action`
 
 ```bash
@@ -17,6 +20,22 @@ npm run build    # check + build into dist/
 Roadmap: P1 scaffold + home + about (done) → P2 first two case-study write-ups
 (done) → P3 remaining cases (done) → P4 demos as diagram-first pages, details
 held back for the interview (done) → P5 live bookshelf-echo dashboard embed.
+
+P5 is blocked, and deliberately not worked around. On 2026-08-29 the pipeline's
+dashboard answered 401 — it sits behind the site's auth gate — and the two open
+feeds are not embeddable either: `daily.json` stopped at 2026-07-27 when digests
+were retired, and `essay.json` sits at 2026-08-15 because the pipeline is under a
+*declared* pause. Embedding any of them would put a number on this site that
+looks broken and is actually correct, which is the exact failure `/lab/earned-green/`
+argues against. P5 waits for a public endpoint that is fresh by construction.
+
+Content as of 2026-08-29: six work case studies, nine lab stories, three demos,
+and a dated `/timeline/`. **The lab and demo lists are data, not markup** —
+`src/data/labCases.ts` and `src/data/demos.ts` — and every count on the site is
+derived from `.length` through `inWords()` in `src/data/numberWords.ts`. Adding a
+story means editing one array; no lede needs to be found and corrected. That is a
+fix for a real bug: the count drifted twice, and the second time two sessions
+collided on the same hand-written number in a merge.
 
 ## How the pages are built
 

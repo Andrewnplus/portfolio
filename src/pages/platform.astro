@@ -42,9 +42,52 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
       throttling, formatting hooks across ~1,300 working copies, wrapper upgrades
       across generations of JDKs, a fleet-wide sweep that never converged because
       new repositories were being provisioned while it ran — fleet problems, fleet
-      solutions.
+      solutions. The machine underneath all of it was rebuilt into a declared
+      one over <a href={`${base}/timeline/`}>twelve days in July</a>.
     </li>
   </ul>
+
+  <h2>Governing the contents, not just the containers</h2>
+  <p>
+    Provisioning repositories is the easy half. The half that decides whether
+    the platform is worth anything is whether what is <em>inside</em> them stays
+    good — and at this size that cannot be a memory exercise.
+  </p>
+  <ul class="clean">
+    <li>
+      <strong>The measurement comes from what is deployed, not from what is
+      committed.</strong> A nightly pass fetches a machine-readable index from
+      every published site and derives the quality data from that. A local scan
+      would be faster and would happily report on work that never reached a
+      reader.
+    </li>
+    <li>
+      <strong>A queue with tiers, not a pass/fail.</strong> Every book is graded
+      against explicit thresholds and lands in one of four states. On the last
+      pass, 87 of them were thin enough to be worth returning to — which is a
+      to-do list, where "1,771 repositories exist" was only ever a number.
+    </li>
+    <li>
+      <strong>Waivers are first-class.</strong> A book can be short because it is
+      a pamphlet, or because no usable source exists, or because it is simply
+      finished. Those are decisions, so they are recorded as decisions — a
+      reason from a fixed vocabulary, a sentence, and the date — and the book
+      leaves the queue without leaving the record. Twenty-seven are waived
+      today, each one answerable.
+    </li>
+    <li>
+      <strong>Not everything deserves to page.</strong> A failed book build is
+      visible on the board but is deliberately kept off the notification path.
+      The fleet is large enough that treating every failure as urgent is the
+      fastest way to teach yourself to ignore it.
+    </li>
+  </ul>
+  <p>
+    The pattern is the same one I keep arriving at:
+    <a href={`${base}/lab/earned-green/`}>a status light has to be able to turn
+    red</a>, and a backlog has to be able to shrink for a reason someone wrote
+    down.
+  </p>
 
   <h2>v1 → v2 → v3 of the same idea</h2>
   <p>

@@ -1,0 +1,140 @@
+---
+import Base from '../../layouts/Base.astro';
+import Diagram from '../../components/Diagram.astro';
+import DBox from '../../components/DBox.astro';
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+---
+
+<Base
+  title="Alerts that triage themselves — Andrew Yang"
+  description="An alert is a question, and the answer used to require me at a keyboard. A headless agent now investigates first and sends the conclusion — with three ways to say 'I already know' that can never hide the alert itself."
+>
+  <p><a href={`${base}/lab/`}>← Lab</a></p>
+  <span class="tag">operations · AI</span>
+  <h1>Alerts that triage themselves</h1>
+  <p class="lede">
+    Once <a href={`${base}/lab/earned-green/`}>every green had to be earned</a>,
+    the reds started arriving reliably — which exposed the next problem. An
+    alert is not information; it is a question, and answering it meant being at
+    a keyboard. So the machine now answers its own questions first, and sends
+    me the conclusion instead of the symptom.
+  </p>
+
+  <Diagram
+    viewBox="0 0 920 314"
+    alt="Alertmanager fans out to two paths. One goes to my phone's chat channel every single time, unconditionally. The other publishes to a subscription topic which a bridge on my own machine consumes one alert at a time; a known-issues gate is consulted, then a headless agent investigates on the box itself and pushes a written conclusion to my phone. When the gate says the issue is known and unchanged, the investigation still runs but the result is only written to a log."
+    caption="Two exits from the same route. Everything clever happens on the right-hand path; the left-hand path is deliberately too dumb to fail."
+  >
+    <DBox x={10} y={24} title="Alertmanager" sub="37 rules on the notify path" />
+    <DBox x={335} y={24} title="Subscription topic" sub="outbound only — the machine" sub2="subscribes, nothing is exposed" />
+    <DBox x={660} y={24} title="Bridge on my machine" sub="one alert at a time" />
+
+    <DBox x={10} y={134} dashed title="Chat, every time" sub="the human path — nothing" sub2="below can suppress it" />
+    <DBox x={335} y={134} title="Headless investigation" sub="read-mostly tools, safe fixes only," sub2="conclusion in the first sentence" />
+    <DBox x={660} y={134} accent title="Known-issues gate" sub={'"I am already on this one"'} sub2="— claimed by alert name" />
+
+    <DBox x={335} y={244} title="Push to my phone" sub="the answer, not the symptom" />
+    <DBox x={660} y={244} dashed title="Known and unchanged" sub="log only — the phone" sub2="stays quiet" />
+
+    <path class="flow" d="M240,54 L329,54" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M565,54 L654,54" marker-end="url(#d-arrow)" />
+    <path class="flow dash" d="M125,84 L125,128" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M775,84 L775,128" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M660,164 L571,164" marker-end="url(#d-arrow)" />
+    <path class="flow" d="M450,194 L450,238" marker-end="url(#d-arrow)" />
+    <path class="flow dash" d="M775,194 L775,238" marker-end="url(#d-arrow)" />
+  </Diagram>
+
+  <h2>What the machine does before it interrupts me</h2>
+  <p>
+    A firing alert publishes to a topic my own machine subscribes to, so the
+    investigator needs no inbound port, no tunnel and no exposed service — the
+    box reaches out, the way every other piece of this platform does. The
+    bridge hands one alert at a time to a headless agent session that reads a
+    runbook, the alert payload, and the machine itself: logs, unit status,
+    sockets, disk, the three network uplinks. It is allowed to take safe,
+    reversible actions — restart a crashed user service, clear a temp
+    directory — and explicitly not allowed to take irreversible ones. Anything
+    destructive comes back as a recommendation.
+  </p>
+  <p>
+    The output is shaped by its delivery: a phone notification truncated to
+    roughly 900 characters. So the runbook demands the conclusion first, then
+    what was done, then what I should do. In the first four weeks it handled
+    <strong>76 alerts</strong> this way. The ones that mattered arrived as a
+    diagnosis with the evidence attached; the rest never woke me up at all.
+  </p>
+
+  <h2>Three ways to say "I already know"</h2>
+  <p>
+    An investigator that re-investigates is worse than none: it trains you to
+    swipe the notification away, which is exactly the habit the whole platform
+    exists to prevent. So there are three suppressions, and the interesting
+    part is that they are deliberately not interchangeable.
+  </p>
+  <ul class="clean">
+    <li>
+      <strong>Fingerprint de-duplication — "don't burn the same investigation
+      twice."</strong> Automatic, time-windowed, invisible.
+    </li>
+    <li>
+      <strong>A known-issues file — "I know about this one, stop telling
+      me."</strong> Hand-written, claimed per alert name, opt-in per entry. On a
+      hit the investigation <em>still runs</em>, because a known problem getting
+      worse is the thing I most need to hear about; only an explicit
+      "known, nothing new" verdict is downgraded to a log line.
+    </li>
+    <li>
+      <strong>An upstream silence — "both of you be quiet, I'm doing
+      maintenance."</strong> Expires on its own.
+    </li>
+  </ul>
+  <p>
+    The invariant that makes this safe to build: <strong>only the third one can
+    silence the human channel.</strong> The first two live entirely on the
+    automated path, so the worst bug I can write into them costs me one missing
+    robot opinion — never a missing alert. That single rule is what let me hand
+    a notification budget to a machine at all.
+  </p>
+
+  <h2>Two failures worth keeping</h2>
+  <p>
+    <strong>An off-by-one in the time domain.</strong> The de-duplication window
+    was 20 hours; the repeat interval for warning-severity alerts was 24. Every
+    critical alert was suppressed correctly, which is why the setting looked
+    healthy for three weeks — but every warning came back at 24.1 hours, cleared
+    the 20-hour window by a comfortable margin, and was investigated again.
+    Three of them did that daily for a week: full investigations, two phone
+    pushes each, not one of them caught. A suppression window is not a duration,
+    it is a claim about a <em>cycle</em>, and it has to be longer than the
+    longest cycle it is supposed to absorb. It is now 25 hours.
+  </p>
+  <p>
+    <strong>Documentation that reached into production.</strong> The known-issues
+    file is prose for me and structured data for the handler, which is a hazard:
+    the format example at the top of the file was, syntactically, a perfectly
+    valid claim on a real alert name. A worked example in a document should not
+    be able to suppress a production alert — the handler now skips fenced
+    blocks, and the example uses names that do not exist. Two guards, because
+    the failure would have been completely silent.
+  </p>
+
+  <h2>Where I drew the line</h2>
+  <p>
+    The agent investigates and reports; it does not decide what is worth
+    knowing. Every alert still reaches me through a path that has no gate on
+    it, and the escalation is a human one — when the answer is not enough, I
+    open the same session from my phone and keep going with the context already
+    loaded. The design goal was never an unattended operator. It was to stop
+    paying the fixed cost of "open the laptop, ssh in, read four logs" before I
+    even know whether it matters.
+  </p>
+
+  <h2>What I'd tell my past self</h2>
+  <p>
+    Automating the <em>response</em> to alerts is much less dangerous than it
+    sounds, provided you never let the automation stand between the alert and
+    the human. Put the intelligence on a branch, keep the trunk stupid, and
+    every mistake you make in the clever part is recoverable by definition.
+  </p>
+</Base>
