@@ -51,6 +51,29 @@ engineering / AI), and a "what I'd show you in person" list. Config values,
 queue names and prompts go stale; the shape of a system and the reasons behind
 it do not.
 
+## Measurement
+
+Until 2026-08-29 this was the only system here with no instrumentation, which
+is an odd thing to admit on a site whose lab section argues that an indicator
+with no failure mode is decoration. Three sources now answer the three
+questions, and none of them costs a line of client-side JavaScript:
+
+| Question | Source |
+|---|---|
+| Does anyone read this, and which page? | Cloudflare zone analytics (path + referrer) |
+| Which audience framing lands? | The `/for/<role>/` paths are distinct URLs — the reading orders double as the instrument |
+| Does anyone click through to the code? | GitHub repo → Insights → Traffic → referring sites |
+
+**The one manual step:** `nplus.page` is on Cloudflare DNS but its records are
+grey-clouded, so traffic goes straight to GitHub Pages and Cloudflare sees
+nothing. Flip the A records to Proxied — the same deploy-then-flip that
+`nplus.wiki` already went through for its gate worker — and set SSL/TLS to
+**Full**. Flexible would loop, because Pages serves a valid certificate and
+expects HTTPS.
+
+No beacon, no third-party script, no cookie banner: the site still ships zero
+client-side JavaScript, and the measurement lives one layer below it.
+
 **`astro check` is not optional.** The diagrams are prop-driven, and a typo'd
 prop (`titel` for `title`) renders an empty label instead of failing the build —
 a silent, invisible defect. `npm run build` and a dedicated CI job both run the

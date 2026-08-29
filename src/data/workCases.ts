@@ -1,0 +1,56 @@
+// 公司案例的清單。與 labCases / demos 同樣抽出來，理由也一樣：頁面只負責排版，
+// 「有幾篇、是哪幾篇」是資料。多一個消費者之後這件事更重要 —— /for/<role>/ 的
+// 角色頁要能引用同一份證據，而不是把標題再抄一次。
+export interface WorkCase {
+  /** Small label above the card title. */
+  tag: string;
+  /** Page slug under /work/. */
+  slug: string;
+  title: string;
+  teaser: string;
+}
+
+export const workCases: WorkCase[] = [
+  {
+    tag: 'performance',
+    slug: 'import-calc-performance',
+    title: 'From a site-wide outage to the right metric',
+    teaser:
+      'Import calculation flooded a config API and took the platform down. Profiling cut the hot-path request count 84% (925 → 151 req/s) — then a service-time analysis corrected the obvious conclusion and found the real bottleneck elsewhere.',
+  },
+  {
+    tag: 'async design',
+    slug: 'sync-to-async-export',
+    title: 'Killing the 60-second timeout: queue-ifying a million-datapoint export',
+    teaser:
+      'A 300-plant customer export (~820k datapoints) could never survive a synchronous 60s window. Redesigned as a queue-backed worker with hash-based job dedup, object-storage delivery, and per-user push notification.',
+  },
+  {
+    tag: 'reliability',
+    slug: 'rabbitmq-4x-preemption',
+    title: 'Pre-empting a broker upgrade outage',
+    teaser:
+      'RabbitMQ 4.3 started rejecting a queue-declaration pattern our shared event library used in two language bindings. Traced, fixed, reproduced in dev, and rolled out across every consumer — before the upgrade shipped.',
+  },
+  {
+    tag: 'platform',
+    slug: 'vendor-integration-platform',
+    title: 'A repeatable architecture for onboarding vendor APIs',
+    teaser:
+      'Six-plus vendor integrations, each spanning six repositories — importer, preprocessor, registration, scheduling, backup, API contract — turned into a routine with self-recovering importers and SLA-protecting traffic separation.',
+  },
+  {
+    tag: 'migration',
+    slug: 'online-data-migration',
+    title: 'Zero-downtime migration of the power-management model',
+    teaser:
+      'An online data migration to a new device abstraction: migration script, transitional gap backfill, and a cutover of setpoint calculation with no data loss.',
+  },
+  {
+    tag: 'domain × backend',
+    slug: 'kpi-calculation-platform',
+    title: 'From physics model to production KPI service',
+    teaser:
+      'Six yield-loss models and the platform’s first device-level KPIs, each built from OpenAPI spec through database schema to the calculation pipeline.',
+  },
+];

@@ -335,6 +335,14 @@ ul.clean li {
   color: var(--muted);
 }
 
+/* The three reading orders on the home page and the role pages. Sized up
+   because it is the one line on the site that tells a reader what to do
+   next — the rest of the page is evidence, this is the door. */
+.roles {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
 footer.site {
   border-top: 1px solid var(--line);
   padding: 1.4rem 0 2.2rem;

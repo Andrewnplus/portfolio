@@ -1,0 +1,75 @@
+---
+import Base from '../../layouts/Base.astro';
+import { roles, contact } from '../../data/roles';
+import { evidenceBySlug } from '../../data/evidence';
+
+// 一頁模板、三個角色。角色頁不是「另一個版本的履歷」——它只是**同一批證據的
+// 另一個排序 + 一句這位讀者為什麼該在意**。證據本身一個字都不重寫，所以兩個
+// 角色頁下面的主張永遠是同一組（見 roles.ts 開頭的三條規則）。
+export function getStaticPaths() {
+  return roles.map((role) => ({ params: { role: role.slug }, props: { role } }));
+}
+
+const { role } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+const items = role.evidence.map((e) => ({ ...evidenceBySlug(e.slug), why: e.why }));
+const others = roles.filter((r) => r.slug !== role.slug);
+const logistics = [contact.arrangement, contact.availability, contact.timezone].filter(Boolean);
+---
+
+<Base title={`${role.label} — Andrew Yang`} description={role.summary}>
+  <p><a href={`${base}/`}>← Home</a></p>
+  <span class="tag">reading this as a {role.label.toLowerCase()}</span>
+  <h1>{role.label}</h1>
+  <p class="lede">{role.ask}</p>
+
+  <div class="callout">
+    <p><strong>What I am looking for</strong></p>
+    <p>
+      {role.label} roles.{logistics.length > 0 && <> {logistics.join(' · ')}.</>}
+      {contact.markets && <> {contact.markets}.</>}
+      {' '}The fastest way to judge whether this is worth a conversation is the
+      first item below; the fastest way to reach me is{' '}
+      <a href={`mailto:${contact.email}`}>{contact.email}</a>.
+    </p>
+  </div>
+
+  <h2>The evidence, in the order that answers your question</h2>
+  <div class="case-list">
+    {
+      items.map((item) => (
+        <a class="card" href={`${base}${item.href}`}>
+          <span class="tag">{item.tag}</span>
+          <h3>{item.title}</h3>
+          <p><strong>Why this one, for you:</strong> {item.why}</p>
+        </a>
+      ))
+    }
+  </div>
+
+  <div class="callout">
+    <p><strong>Where this framing stops.</strong> {role.limit}</p>
+    <p>
+      Same evidence, read another way:{' '}
+      {
+        others.map((r, i) => (
+          <>
+            {i > 0 && <> · </>}
+            <a href={`${base}/for/${r.slug}/`}>{r.label}</a>
+          </>
+        ))
+      }
+    </p>
+  </div>
+
+  <h2>Everything, unfiltered</h2>
+  <p>
+    These pages are a reading order, not a different story — nothing here is
+    written twice, and every card above links to the one canonical page for that
+    piece of work. If you would rather browse it yourself:{' '}
+    <a href={`${base}/work/`}>case studies</a>,{' '}
+    <a href={`${base}/lab/`}>the lab</a>,{' '}
+    <a href={`${base}/demo/`}>live demos</a>,{' '}
+    <a href={`${base}/timeline/`}>the migration timeline</a>.
+  </p>
+</Base>
