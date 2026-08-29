@@ -14,7 +14,8 @@ const { role } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 const items = role.evidence.map((e) => ({ ...evidenceBySlug(e.slug), why: e.why }));
 const others = roles.filter((r) => r.slug !== role.slug);
-const logistics = [contact.arrangement, contact.availability, contact.timezone].filter(Boolean);
+// 這幾格是片語不是句子，模板負責串成通順的散文；任何一格是 null 就整個子句消失。
+const { arrangement, availability, markets, timezone, email } = contact;
 ---
 
 <Base title={`${role.label} — Andrew Yang`} description={role.summary}>
@@ -26,11 +27,12 @@ const logistics = [contact.arrangement, contact.availability, contact.timezone].
   <div class="callout">
     <p><strong>What I am looking for</strong></p>
     <p>
-      {role.label} roles.{logistics.length > 0 && <> {logistics.join(' · ')}.</>}
-      {contact.markets && <> {contact.markets}.</>}
+      {role.label} roles{arrangement && <>, {arrangement}</>}.
+      {availability && <> {availability}, working from {timezone}.</>}
+      {markets && <> Looking at {markets}.</>}
       {' '}The fastest way to judge whether this is worth a conversation is the
       first item below; the fastest way to reach me is{' '}
-      <a href={`mailto:${contact.email}`}>{contact.email}</a>.
+      <a href={`mailto:${email}`}>{email}</a>.
     </p>
   </div>
 
