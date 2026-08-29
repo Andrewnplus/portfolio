@@ -13,14 +13,16 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
   <span class="tag">queues · LLM pipeline</span>
   <h1>bookshelf-echo: a pipeline that decides what is worth spending on</h1>
   <p class="lede">
-    Five sources in, one daily digest out, no human in the loop. The content is
-    the by-product; the system is the point — delivery guarantees you can audit,
-    and a cost ceiling that parks work in the queue rather than overspending.
+    Five sources in, at most one book-informed essay out per day, no human in
+    the loop — and on a day when nothing in the news earns a page from my
+    library, nothing is published at all. The content is the by-product; the
+    system is the point — delivery guarantees you can audit, and a cost ceiling
+    that parks work in the queue rather than overspending.
   </p>
 
   <Diagram
     viewBox="0 0 920 320"
-    alt="Sources feed a broker; items are enriched and de-duplicated, then pass a relevance gate before any model call; surviving items are digested under a daily budget, curated and quote-checked, and published as a static site. Failed messages fall through a retry ladder into a dead letter queue with replay tooling."
+    alt="Sources feed a broker; items are enriched and de-duplicated, then pass a relevance gate before any model call; surviving items are summarised under a daily budget, then once a day the strongest pick is re-ranked and written up as an essay whose every quote is checked verbatim before it is published as a static site. Failed messages fall through a retry ladder into a dead letter queue with replay tooling."
     caption="The whole system in one picture. Everything that is expensive happens to the right of a gate that costs nothing."
   >
     <DBox x={10} y={24} title="Sources" sub="five feeds, each on its own cadence" />
@@ -45,9 +47,9 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
     <DBox
       x={10}
       y={134}
-      title="Curate + verify"
-      sub="daily re-rank; quotes checked"
-      sub2="verbatim, without a model"
+      title="Curate + write"
+      sub="daily re-rank, one essay drafted;"
+      sub2="quotes checked verbatim, no model"
     />
 
     <DBox x={10} y={244} title="Publish" sub="static site, rebuilt by CI" />
@@ -165,8 +167,11 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 
   <h2>See it</h2>
   <p>
-    <a href="https://nplus.wiki/bookshelf-echo-site/">Today's digest</a> —
-    published unattended, one per day.<br />
+    <a href="https://nplus.wiki/bookshelf-echo-site/">The latest essay</a> —
+    published unattended. If the date on it is not today, that is the system
+    working as specified: the essayist is allowed to decline, and the pipeline
+    can be stopped by declaring it, which parks every message instead of
+    dropping it.<br />
     <a href="https://github.com/nplus-father/bookshelf-echo">Source and decision records on GitHub</a>
      — the diagram above is the README's diagram, kept in sync.
   </p>

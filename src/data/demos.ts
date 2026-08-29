@@ -23,7 +23,7 @@ export const demos: Demo[] = [
     slug: 'bookshelf-echo',
     title: 'bookshelf-echo — a pipeline that decides what is worth spending on',
     teaser:
-      'Collects AI news from five sources, filters it against my own book library before any model call, and publishes a daily digest. Reliability semantics you can audit; a cost ceiling that parks work in the queue instead of overspending.',
+      'Collects AI news from five sources, filters it against my own book library before any model call, and publishes at most one book-informed essay a day. Reliability semantics you can audit; a cost ceiling that parks work in the queue instead of overspending.',
     short: 'a queue-based LLM pipeline that gates spend on relevance',
   },
   {

@@ -17,8 +17,8 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -29,10 +29,11 @@ jobs:
     needs: check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: withastro/action@v3
+      - uses: actions/checkout@v7
+      - uses: withastro/action@v6
         with:
-          # withastro/action still defaults to Node 20; Astro 7 needs >=22.12.
+          # v6 already defaults to Node 24; stated anyway so the version this
+          # site is built with is visible here rather than inside the action.
           node-version: 24
 
   deploy:
@@ -43,4 +44,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

@@ -11,13 +11,20 @@ export const facts = {
    *  index from 1,771 deployed book sites, before note stations, handbooks
    *  and the platform repos themselves. Always stated with a "+". */
   repoCount: '1,700',
-  /** Books read and kept as structured notes. Always stated as "roughly". */
-  booksRead: '800',
-  /** Support tickets resolved at work, cumulative. */
+  /** Books in the searchable notes corpus. Always stated as "roughly".
+   *  This replaced a "books read" figure, which was a claim about me that
+   *  nobody could check. This one is a query: the library index holds 1,468
+   *  books and 35,708 chapters (2026-08-29), refreshed nightly, and it is the
+   *  corpus the resonance gate actually searches. Rounded down. */
+  booksIndexed: '1,450',
+  /** Support tickets resolved at work, cumulative.
+   *  Self-reported — no source I can re-derive. Last reviewed 2026-08-29. */
   ticketsResolved: '470',
-  /** Third-party vendor APIs onboarded end-to-end. */
+  /** Third-party vendor APIs onboarded end-to-end.
+   *  Self-reported. Last reviewed 2026-08-29. */
   vendorApis: '6',
-  /** Years owning the ingest pipeline. */
+  /** Years owning the ingest pipeline. Self-reported, and the one number here
+   *  that goes stale by doing nothing. Last reviewed 2026-08-29. */
   yearsOwning: '3',
 } as const;
 
