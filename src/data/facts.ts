@@ -27,16 +27,10 @@ export const facts = {
 //
 //   yearsOwning  index.astro          "Three years and counting as the de-facto owner"
 //                work/index.astro     "from three-plus years owning"
-//   labCount     index.astro          "Nine stories of the same ideas"
-//                lab/index.astro      description "Nine stories of the same
-//                                     engineering ideas" — the cards themselves
-//                                     come from the `cases` array on that page,
-//                                     so adding a story means editing both ledes
-//   demoCount    index.astro          description "three live demo systems",
-//                                     card "three running systems"
-//                demo/index.astro     h1 + description "Three systems"
-//                about.astro          "three live systems"
-//                404.astro            "Three systems running right now"
+// (labCount and demoCount used to be listed here. They are now derived from
+//  src/data/labCases.ts and src/data/demos.ts via inWords(), because a ledger
+//  entry still relies on someone reading it — and twice it was not read.)
+//
 //   vendorApis   work/index.astro     "Six-plus vendor integrations"
 //                work/vendor-integration-platform.astro
 //                                     "Six-plus third-party integrations",
