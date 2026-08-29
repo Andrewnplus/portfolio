@@ -34,9 +34,9 @@ export const labCases: LabCase[] = [
   {
     tag: 'knowledge systems',
     slug: 'knowledge-as-infrastructure',
-    title: `Turning ${facts.booksRead} read books into infrastructure`,
+    title: `Turning ${facts.booksIndexed} books of notes into infrastructure`,
     teaser:
-      `Reading notes became a queryable engine: full-text + vector search over ~${facts.booksRead} books, served to machines through an authenticated API — so a news pipeline can ask "which of my books resonate with this?"`,
+      `Reading notes became a queryable engine: full-text + vector search over ~${facts.booksIndexed} books, served to machines through an authenticated API — so a news pipeline can ask "which of my books resonate with this?"`,
   },
   {
     tag: 'fleet management',
