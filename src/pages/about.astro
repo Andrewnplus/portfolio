@@ -74,15 +74,11 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
       ))
     }.
   </p>
-  {
-    (contact.arrangement || contact.availability) && (
-      <p>
-        {[contact.arrangement, contact.availability, contact.timezone]
-          .filter(Boolean)
-          .join(' · ')}.
-      </p>
-    )
-  }
+  <p>
+    {contact.arrangement && <>Working {contact.arrangement}. </>}
+    {contact.availability && <>{contact.availability}, from {contact.timezone}. </>}
+    {contact.markets && <>Looking at {contact.markets}.</>}
+  </p>
 
   <h2>Contact</h2>
   <p>

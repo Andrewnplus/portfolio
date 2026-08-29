@@ -11,13 +11,14 @@ export const contact = {
   /** Verifiable and stable; safe to state. */
   timezone: 'Asia/Taipei (UTC+8)',
 
-  // ⚠️ Andrew fills these in. They are the three questions every reader of a
-  // portfolio has after "is this person any good", and the site currently
-  // answers none of them. Nothing here is guessed on your behalf.
-  /** e.g. 'Remote (UTC+8 overlap)' | 'Taipei, hybrid' | 'Remote or Taipei' */
-  arrangement: null as string | null,
-  /** e.g. 'Open to conversations now' | 'Available from November 2026' */
-  availability: null as string | null,
-  /** e.g. 'Taiwan and remote-first teams in Asia-Pacific or Europe' */
-  markets: null as string | null,
+  // The three questions every reader has after "is this person any good".
+  // Confirmed by Andrew 2026-08-29. Each is a phrase, not a sentence: the
+  // templates slot them into running prose, so a null drops the clause
+  // instead of leaving a dangling label behind.
+  /** Slots after "<role> roles, …". */
+  arrangement: 'remote or in Taipei' as string | null,
+  /** Stands as its own sentence. */
+  availability: 'Open to conversations now' as string | null,
+  /** Slots after "Looking at …". */
+  markets: 'Taiwan, plus remote-first teams across Asia-Pacific and Europe' as string | null,
 } as const;
