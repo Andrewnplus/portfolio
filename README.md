@@ -4,7 +4,10 @@ Engineering portfolio site — evidence-first: every claim links to something yo
 can read or run.
 
 - Astro static site, zero client-side JavaScript, light/dark via `prefers-color-scheme`
-- Content plan and confidentiality rules: `workspace/career/03-portfolio-site-plan.md` (local)
+- Confidentiality rule, since the plan document that used to hold it is gone: work
+  case studies describe the shape of a system and the judgment calls, never an
+  employer's configuration, customer names or internal figures. Personal-system
+  pages may name components; anything that goes stale monthly stays off the page
 - Deploys to GitHub Pages via `withastro/action`
 
 ```bash
@@ -17,6 +20,12 @@ npm run build    # check + build into dist/
 Roadmap: P1 scaffold + home + about (done) → P2 first two case-study write-ups
 (done) → P3 remaining cases (done) → P4 demos as diagram-first pages, details
 held back for the interview (done) → P5 live bookshelf-echo dashboard embed.
+
+Content as of 2026-08-29: six work case studies, eight lab stories, three demos.
+The lab and demo card lists live in the `cases` / `demos` arrays on their index
+pages; the counts are also spelled out in the home, about and 404 ledes, which is
+why `src/data/facts.ts` carries a ledger of every place a count is restated in
+words. Adding a story means editing the array *and* the ledes it lists.
 
 ## How the pages are built
 

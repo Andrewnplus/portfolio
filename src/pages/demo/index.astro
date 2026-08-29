@@ -14,6 +14,13 @@ const demos = [
       'Collects AI news from five sources, filters it against my own book library before any model call, and publishes a daily digest. Reliability semantics you can audit; a cost ceiling that parks work in the queue instead of overspending.',
   },
   {
+    tag: 'queues · two runtimes',
+    slug: 'voice-studio',
+    title: 'voice studio — a paid job crossing a runtime boundary',
+    teaser:
+      'Paste a video URL and a script, get back an mp3 of that voice reading it. A producer in Kubernetes, a worker on the host, a queue that carries only an id — and a contract between two languages that fails on the first connection rather than the first outage.',
+  },
+  {
     tag: 'production · one real shop',
     slug: 'sashimi-printer',
     title: 'sashimi-printer — an LLM in the middle of a working kitchen',
@@ -26,9 +33,9 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 
 <Base
   title="Demos — Andrew Yang"
-  description="Two systems running right now: a queue-based LLM pipeline that gates spend on relevance, and an order-to-printer system built around the model being wrong."
+  description="Three systems running right now: a queue-based LLM pipeline that gates spend on relevance, an order-to-printer system built around the model being wrong, and a paid job split across two runtimes."
 >
-  <h1>Two systems that are running right now</h1>
+  <h1>Three systems that are running right now</h1>
   <p class="lede">
     Case studies are claims about the past; these are systems you can check
     today. Both are small enough for one operator and real enough to break —
