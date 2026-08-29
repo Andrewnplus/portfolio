@@ -47,6 +47,10 @@ const demoCount = inWords(demos.length);
       <h3>Live demos — {demoCount} running systems</h3>
       <p>{demoList().charAt(0).toUpperCase() + demoList().slice(1)}. All running now.</p>
     </a>
+    <a class="card" href={`${base}/timeline/`}>
+      <h3>Twelve days in July</h3>
+      <p>A dated log of one migration: a hand-run machine became a declared one — every cutover dual-run first, every replaced component deleted the same day, every drill run twice.</p>
+    </a>
     <a class="card" href={`${base}/about/`}>
       <h3>About</h3>
       <p>Background, technical range, and how to reach me.</p>
