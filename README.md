@@ -21,11 +21,21 @@ Roadmap: P1 scaffold + home + about (done) → P2 first two case-study write-ups
 (done) → P3 remaining cases (done) → P4 demos as diagram-first pages, details
 held back for the interview (done) → P5 live bookshelf-echo dashboard embed.
 
-Content as of 2026-08-29: six work case studies, eight lab stories, three demos.
-The lab and demo card lists live in the `cases` / `demos` arrays on their index
-pages; the counts are also spelled out in the home, about and 404 ledes, which is
-why `src/data/facts.ts` carries a ledger of every place a count is restated in
-words. Adding a story means editing the array *and* the ledes it lists.
+P5 is blocked, and deliberately not worked around. On 2026-08-29 the pipeline's
+dashboard answered 401 — it sits behind the site's auth gate — and the two open
+feeds are not embeddable either: `daily.json` stopped at 2026-07-27 when digests
+were retired, and `essay.json` sits at 2026-08-15 because the pipeline is under a
+*declared* pause. Embedding any of them would put a number on this site that
+looks broken and is actually correct, which is the exact failure `/lab/earned-green/`
+argues against. P5 waits for a public endpoint that is fresh by construction.
+
+Content as of 2026-08-29: six work case studies, nine lab stories, three demos,
+and a dated `/timeline/`. **The lab and demo lists are data, not markup** —
+`src/data/labCases.ts` and `src/data/demos.ts` — and every count on the site is
+derived from `.length` through `inWords()` in `src/data/numberWords.ts`. Adding a
+story means editing one array; no lede needs to be found and corrected. That is a
+fix for a real bug: the count drifted twice, and the second time two sessions
+collided on the same hand-written number in a merge.
 
 ## How the pages are built
 
