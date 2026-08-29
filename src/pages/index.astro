@@ -4,6 +4,7 @@ import { facts } from '../data/facts';
 import { labCases } from '../data/labCases';
 import { demos, demoList } from '../data/demos';
 import { inWords } from '../data/numberWords';
+import { roles, contact } from '../data/roles';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 // 兩個數量都由清單長度衍生：加一篇 lab 或一個 demo 不必記得回來改句子。
 const labCount = inWords(labCases.length, true);
@@ -21,6 +22,29 @@ const demoCount = inWords(demos.length);
     de-facto owner of a solar-monitoring ingest pipeline
     (Kotlin · PHP · RabbitMQ · MySQL · Kubernetes).
   </p>
+
+  <div class="callout">
+    <p>
+      <strong>I am looking for my next role</strong> — backend, full-stack or
+      forward-deployed. Same work, three different first questions, so there are
+      three reading orders through the same evidence:
+    </p>
+    <p class="roles">
+      {
+        roles.map((r, i) => (
+          <>
+            {i > 0 && <> · </>}
+            <a href={`${base}/for/${r.slug}/`}>{r.label}</a>
+          </>
+        ))
+      }
+    </p>
+    <p class="muted">
+      Nothing on those pages is written twice — they select and order the pages
+      below, and say why each one answers that reader's question. Reach me at{' '}
+      <a href={`mailto:${contact.email}`}>{contact.email}</a>.
+    </p>
+  </div>
 
   <div class="stats">
     <div class="stat"><span class="n">{facts.yearsOwning}+ yrs</span><span class="d">ingest-pipeline de-facto owner, cross-stack root-cause work</span></div>

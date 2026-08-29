@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import { facts } from '../data/facts';
 import { demos, demoList } from '../data/demos';
 import { inWords } from '../data/numberWords';
+import { roles, contact } from '../data/roles';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---
 
@@ -59,10 +60,38 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
     — {demoList()} — that put my reliability claims where anyone can check them.
   </p>
 
+  <h2>What I'm looking for</h2>
+  <p>
+    My next role: <strong>backend, full-stack or forward-deployed engineering</strong>.
+    Those are three different first questions rather than three different
+    résumés, so each has its own reading order through the same evidence —{' '}
+    {
+      roles.map((r, i) => (
+        <>
+          {i > 0 && <> · </>}
+          <a href={`${base}/for/${r.slug}/`}>{r.label}</a>
+        </>
+      ))
+    }.
+  </p>
+  {
+    (contact.arrangement || contact.availability) && (
+      <p>
+        {[contact.arrangement, contact.availability, contact.timezone]
+          .filter(Boolean)
+          .join(' · ')}.
+      </p>
+    )
+  }
+
   <h2>Contact</h2>
   <p>
-    <a href="https://github.com/Andrewnplus">github.com/Andrewnplus</a> ·
-    <a href="mailto:andrew.nplus@gmail.com">andrew.nplus@gmail.com</a><br />
-    <span class="muted">PDF résumé: on request (web version of the case studies is canonical).</span>
+    <a href={contact.github}>{contact.github.replace('https://', '')}</a> ·
+    <a href={`mailto:${contact.email}`}>{contact.email}</a><br />
+    <span class="muted">
+      Email is the fastest route and I answer it. A PDF résumé exists on
+      request, but the case studies here are the canonical version — they say
+      more than a PDF can, and they are the thing I would rather be judged on.
+    </span>
   </p>
 </Base>
