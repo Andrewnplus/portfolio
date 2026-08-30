@@ -3,9 +3,6 @@ import Base from '../../layouts/Base.astro';
 import { roles, contact } from '../../data/roles';
 import { evidenceBySlug } from '../../data/evidence';
 
-// 一頁模板、三個角色。角色頁不是「另一個版本的履歷」——它只是**同一批證據的
-// 另一個排序 + 一句這位讀者為什麼該在意**。證據本身一個字都不重寫，所以兩個
-// 角色頁下面的主張永遠是同一組（見 roles.ts 開頭的三條規則）。
 export function getStaticPaths() {
   return roles.map((role) => ({ params: { role: role.slug }, props: { role } }));
 }

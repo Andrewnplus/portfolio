@@ -1,37 +1,13 @@
-// The one file that is allowed to be audience-specific.
-//
-// Same evidence, three readers. A backend interviewer and a forward-deployed
-// team are not looking for different facts about me — they are looking for
-// different *things* in the same facts, and they arrive with different first
-// questions. So each role here selects from the shared evidence index, orders
-// it, and adds one sentence saying why that item answers *their* question.
-//
-// The rules that keep this honest, and worth defending out loud:
-//
-//   1. No page is written twice. The role pages link to the canonical case
-//      study; they never restate or re-spin what it says. Anyone who reads two
-//      of these pages will find the same claims underneath.
-//   2. Selection is justification. An item appears on a role page only if
-//      there is a `why` written for it. You cannot include something without
-//      saying what it is doing there, which is the same forcing function as
-//      the book-health waivers: the reason is the record.
-//   3. A wrong slug fails the build (see evidence.ts), because a role page
-//      silently showing four items instead of five looks perfectly healthy.
 import { contact } from './contact';
 
 export type RoleSlug = 'backend' | 'fullstack' | 'fde';
 
 export interface Role {
   slug: RoleSlug;
-  /** Nav label and the h1. */
   label: string;
-  /** Meta description; also the card teaser on the home page. */
   summary: string;
-  /** The ask, in this reader's terms. Rendered as the lede. */
   ask: string;
-  /** Ordered; each entry names a slug in the evidence index. */
   evidence: { slug: string; why: string }[];
-  /** One honest sentence about where this framing stops. */
   limit: string;
 }
 

@@ -1,19 +1,8 @@
-// Demos = 我自己在跑的、活著的系統。與 /work/ 和 /lab/ 的分工：work 是公司
-// 案例、lab 是設計演進，demo 是「現在正在跑、可以當場看」的東西。
-// 寫法原則（刻意的）：每頁一張流程圖 + 三個讀者視角（商業 / 工程 / AI），
-// 只寫不會過時的結構與判斷，實作細節留到面談當場展開。
-//
-// 清單住在這裡而不是頁面裡，因為「有幾個 demo」在五個地方被寫成句子
-// （首頁描述與卡片、demo 頁的 h1 與描述、about、404）。數量由陣列長度衍生，
-// 句子裡的列舉由 short 拼出來——加一個 demo 只要改這個檔案。
 export interface Demo {
-  /** Small label above the card title. */
   tag: string;
-  /** Page slug under /demo/. */
   slug: string;
   title: string;
   teaser: string;
-  /** Noun phrase for the running-prose lists elsewhere on the site. */
   short: string;
 }
 
@@ -44,7 +33,6 @@ export const demos: Demo[] = [
   },
 ];
 
-/** "a, b and c" — the Oxford comma is deliberate: one of the items contains "and". */
 export function demoList(): string {
   const s = demos.map((d) => d.short);
   return s.length < 2 ? (s[0] ?? '') : `${s.slice(0, -1).join(', ')}, and ${s[s.length - 1]}`;

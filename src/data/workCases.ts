@@ -1,10 +1,5 @@
-// 公司案例的清單。與 labCases / demos 同樣抽出來，理由也一樣：頁面只負責排版，
-// 「有幾篇、是哪幾篇」是資料。多一個消費者之後這件事更重要 —— /for/<role>/ 的
-// 角色頁要能引用同一份證據，而不是把標題再抄一次。
 export interface WorkCase {
-  /** Small label above the card title. */
   tag: string;
-  /** Page slug under /work/. */
   slug: string;
   title: string;
   teaser: string;

@@ -1,8 +1,4 @@
 ---
-// A labelled box inside a <Diagram>. Default size 230×60 is the shared grid
-// unit; three of them at x = 10 / 335 / 660 fill one row of a 920-wide canvas.
-// Keep `sub` lines under ~38 characters at the default width — they are not
-// wrapped, and an overflowing label is worse than a shorter one.
 interface Props {
   x: number;
   y: number;
@@ -11,9 +7,7 @@ interface Props {
   title: string;
   sub?: string;
   sub2?: string;
-  /** Accent styling: the one box the reader should look at first. */
   accent?: boolean;
-  /** Dashed border: a side path, not the happy path. */
   dashed?: boolean;
 }
 const { x, y, w = 230, h = 60, title, sub, sub2, accent = false, dashed = false } = Astro.props;

@@ -4,9 +4,6 @@ import Diagram from '../components/Diagram.astro';
 import DBox from '../components/DBox.astro';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 
-// 這頁刻意是「有日期的」：/lab/ 講方法、/platform/ 講規模，這裡講一次
-// 完整的搬遷是怎麼排序的。Day 1 = 2026-07-20，Day 12 = 2026-07-31，每一列
-// 都對得上 nplus-infra / nplus-gitops 的 commit，所以不要改成約略說法。
 const days = [
   {
     date: 'Day 1',

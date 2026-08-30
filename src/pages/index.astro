@@ -6,7 +6,6 @@ import { demos, demoList } from '../data/demos';
 import { inWords } from '../data/numberWords';
 import { roles, contact } from '../data/roles';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
-// 兩個數量都由清單長度衍生：加一篇 lab 或一個 demo 不必記得回來改句子。
 const labCount = inWords(labCases.length, true);
 const demoCount = inWords(demos.length);
 ---

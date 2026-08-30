@@ -3,7 +3,6 @@ import Base from '../../layouts/Base.astro';
 import { labCases } from '../../data/labCases';
 import { inWords } from '../../data/numberWords';
 
-// 清單與數量的唯一真相在 src/data/labCases.ts —— 這頁只負責排版。
 const count = inWords(labCases.length, true);
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 ---

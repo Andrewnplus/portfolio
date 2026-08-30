@@ -1,16 +1,7 @@
-// The lab card list, extracted from the page so that "how many stories are
-// there" is a value and not a sentence somebody has to remember to update.
-// Twice now a story was added and the ledes still said the old number — the
-// second time, two sessions collided on the same hand-written count in a merge.
-//
-// Order matters: it is reading order, so a story that answers an earlier one
-// (earned-green → alerts-that-triage-themselves) comes after it.
 import { facts } from './facts';
 
 export interface LabCase {
-  /** Small label above the card title. */
   tag: string;
-  /** Page slug under /lab/. */
   slug: string;
   title: string;
   teaser: string;

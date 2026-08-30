@@ -4,10 +4,6 @@ import Diagram from '../../components/Diagram.astro';
 import DBox from '../../components/DBox.astro';
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 
-// 這頁的用途跟其他 lab 頁不同：其他頁講「我的設計如何演進」，這頁講
-// 「我的設計對應到誰的設計」。骨架是一張對照表 + 誠實的差距清單。
-// 每一列都必須是我真的跑過的東西，不是讀過的東西——一旦哪一列變成
-// 「我打算做」，就從表裡拿掉，否則整張表的可信度一起掉。
 const mapping = [
   {
     mine: 'k3s, one node, hand-tuned requests',
