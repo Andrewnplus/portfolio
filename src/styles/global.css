@@ -165,9 +165,6 @@ p.lede {
   margin-bottom: 0.6rem;
 }
 
-/* Diagrams: hand-authored inline SVG, no client-side JS. Colours come from the
-   theme variables so light/dark both work; the wrapper scrolls horizontally on
-   narrow screens instead of shrinking the labels into illegibility. */
 .diagram {
   margin: 1.6rem 0 0.6rem;
   padding: 1rem;
@@ -216,7 +213,6 @@ p.lede {
   font-style: italic;
 }
 
-/* Panel heading, for diagrams split into before / after. */
 .diagram .ph {
   fill: var(--muted);
   font-size: 12px;
@@ -257,7 +253,6 @@ figcaption {
   margin-top: 0.55rem;
 }
 
-/* Three reader lenses: business / engineering / AI. */
 .lenses {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
@@ -335,9 +330,6 @@ ul.clean li {
   color: var(--muted);
 }
 
-/* The three reading orders on the home page and the role pages. Sized up
-   because it is the one line on the site that tells a reader what to do
-   next — the rest of the page is evidence, this is the door. */
 .roles {
   font-size: 1.05rem;
   font-weight: 600;
@@ -358,10 +350,6 @@ code {
   padding: 0.08em 0.35em;
 }
 
-/* Tables are the exception, not the house style: use one only when the content
-   is genuinely a mapping between columns. On narrow screens the table scrolls
-   inside its own box rather than reflowing, for the same reason the diagrams
-   do — a squeezed cell hides the comparison that is the whole point. */
 .table-scroll {
   overflow-x: auto;
   margin: 1.4rem 0;
