@@ -1,0 +1,21 @@
+name: CI Check
+
+# Renovate automerges patches and minors here, so a PR needs a gate of its own:
+# deploy.yml only runs on push, which would have meant finding out a bump broke
+# the build after it was already on main.
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    uses: nplus-father/workflows/.github/workflows/astro-ci-check.yml@v1
+    secrets: inherit
+    with:
+      # No lint / format:check script in this package.json (only dev, check,
+      # build, preview), and `npm run lint` against a missing script is exit 1.
+      run-lint: false
+      run-format-check: false
+      # Owned by Andrewnplus, not the nplus-father org — org-level self-hosted
+      # runners are not reachable from here, so stay GitHub-hosted.
+      runner-labels: '["ubuntu-latest"]'
